@@ -282,7 +282,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingBottom: 40,
-    maxWidth: 800,
+    maxWidth: 500,
     width: '100%',
     alignSelf: 'center',
   },
@@ -333,7 +333,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     marginBottom: 24,
     gap: 12,
-    maxWidth: 760,
+    maxWidth: 500,
     alignSelf: 'center',
     width: '100%',
   },

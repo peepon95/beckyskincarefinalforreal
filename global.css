@@ -1,0 +1,89 @@
+/* Global Web Styles for Becky Skincare App */
+
+/* Reset and base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: transparent !important;
+}
+
+body {
+  overflow: auto !important;
+}
+
+#root {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  flex: 1;
+  background-color: transparent !important;
+}
+
+/* Remove ALL default backgrounds from React Native Web */
+#root>div,
+#root>div>div,
+[data-expo-theme],
+[data-expo-theme]>div {
+  background-color: transparent !important;
+  width: 100%;
+}
+
+/* Aggressively remove any colored backgrounds */
+div[style*="rgb"],
+div[style*="rgba"],
+div[style*="background"],
+div[style*="#"] {
+  background-color: transparent !important;
+}
+
+/* Target SafeAreaView and similar containers */
+div[style*="position: absolute"],
+div[style*="position: fixed"] {
+  background-color: transparent !important;
+}
+
+/* Remove bottom bars and fixed elements with background colors */
+div[style*="bottom: 0"],
+div[style*="bottom:0"] {
+  background-color: transparent !important;
+}
+
+/* Mobile-friendly viewport settings */
+@media (max-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+
+  body {
+    -webkit-text-size-adjust: 100%;
+  }
+}
+
+/* Ensure all containers are mobile-friendly */
+[data-expo-theme]>div {
+  width: 100%;
+  max-width: 100vw;
+}
+
+/* Ensure proper mobile scaling */
+@viewport {
+  width: device-width;
+  zoom: 1.0;
+}
+
+/* Force transparent backgrounds on all divs except those with explicit white backgrounds */
+div:not([style*="background-color: rgb(255, 255, 255)"]):not([style*="background-color:#FFFFFF"]):not([style*="background-color: #FFFFFF"]):not([style*="background-color:#FFF"]):not([style*="background-color: #FFF"]) {
+  background-color: transparent !important;
+}

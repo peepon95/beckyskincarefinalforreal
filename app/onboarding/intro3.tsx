@@ -47,6 +47,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 20,
+    maxWidth: 500,
+    width: '100%',
+    alignSelf: 'center',
   },
   text: {
     fontFamily: 'Lora-Regular',
@@ -58,6 +61,9 @@ const styles = StyleSheet.create({
   footer: {
     padding: 16,
     paddingBottom: 40,
+    maxWidth: 500,
+    width: '100%',
+    alignSelf: 'center',
   },
   primaryButton: {
     height: 56,

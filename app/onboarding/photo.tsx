@@ -6,13 +6,17 @@ import { Typewriter } from '@/components/Typewriter';
 import { Camera, Upload, X, ArrowLeft } from 'lucide-react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { LinearGradient } from 'expo-linear-gradient';
+import { analyzeSkin } from '@/src/services/api';
+import storage from '@/src/utils/storage';
+import SkinAnalysisLoader from '@/components/SkinAnalysisLoader';
 
 export default function PhotoScreen() {
   const router = useRouter();
-  const { updateData } = useOnboarding();
+  const { updateData, data } = useOnboarding();
   const [showSecondLine, setShowSecondLine] = useState(false);
   const [photoUri, setPhotoUri] = useState<string>('');
   const [photoBase64, setPhotoBase64] = useState<string>('');
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   const requestCameraPermission = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
@@ -41,10 +45,14 @@ export default function PhotoScreen() {
       allowsEditing: true,
       aspect: [1, 1],
       quality: 0.8,
+      base64: true,
     });
 
     if (!result.canceled && result.assets[0]) {
       setPhotoUri(result.assets[0].uri);
+      if (result.assets[0].base64) {
+        setPhotoBase64(`data:image/jpeg;base64,${result.assets[0].base64}`);
+      }
     }
   };
 
@@ -70,15 +78,81 @@ export default function PhotoScreen() {
 
   const handleRetake = () => {
     setPhotoUri('');
+    setPhotoBase64('');
   };
 
-  const handleNext = () => {
-    if (photoUri) {
+  const handleStartAnalysis = async () => {
+    if (!photoBase64) {
+      Alert.alert('No Image', 'Please take or upload a photo first');
+      return;
+    }
+
+    try {
+      setIsAnalyzing(true);
+      console.log('🚀 Starting skin analysis...');
+
+      // Save photo data to context
       updateData({
         photoUri,
-        photoBase64: photoBase64 || undefined
+        photoBase64
       });
-      router.push('/onboarding/final');
+
+      const results = await analyzeSkin(photoBase64);
+      console.log('✅ Analysis complete!', results);
+
+      // Include photoUri in saved results
+      const dataToSave = {
+        ...results,
+        photoUri,
+      };
+
+      await storage.saveSkinAnalysis(dataToSave);
+      console.log('💾 Results saved to storage');
+
+      // Wait a bit for the loader animation
+      setTimeout(() => {
+        setIsAnalyzing(false);
+        router.push('/skin-results');
+      }, 1000);
+
+    } catch (error: any) {
+      console.error('❌ Analysis error:', error);
+      setIsAnalyzing(false);
+
+      // Determine user-friendly error message
+      let errorMessage = "Becky couldn't analyse your skin right now. Please check your connection and try again.";
+
+      if (error?.message) {
+        if (error.message.includes("Becky couldn't") ||
+          error.message.includes('Please') ||
+          error.message.includes('try again')) {
+          errorMessage = error.message;
+        } else if (error.message.includes('quota') || error.message.includes('429') || error.message.includes('Rate limit')) {
+          errorMessage = 'Rate limit exceeded. Please wait a moment and try again.';
+        } else if (error.message.includes('network') || error.message.includes('Network') || error.message.includes('fetch')) {
+          errorMessage = 'Network error. Please check your internet connection and try again.';
+        } else if (error.message.includes('API key') || error.message.includes('authentication')) {
+          errorMessage = 'Service configuration error. Please contact support.';
+        }
+      }
+
+      // Show error alert
+      Alert.alert(
+        'Analysis Failed',
+        errorMessage,
+        [
+          {
+            text: 'Try Again',
+            onPress: () => handleStartAnalysis(),
+            style: 'default'
+          },
+          {
+            text: 'Go Back',
+            onPress: () => handleRetake(),
+            style: 'cancel'
+          }
+        ]
+      );
     }
   };
 
@@ -87,6 +161,12 @@ export default function PhotoScreen() {
       colors={['#FFF0F5', '#F8E8FF', '#E6F3FF']}
       style={styles.container}
     >
+      <SkinAnalysisLoader
+        visible={isAnalyzing}
+        onComplete={() => { }} // Handled in handleStartAnalysis
+        minimumDuration={2000}
+      />
+
       {/* Back Button */}
       <TouchableOpacity
         style={styles.backButton}
@@ -159,14 +239,20 @@ export default function PhotoScreen() {
 
       {photoUri && (
         <View style={styles.footer}>
-          <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
+          <TouchableOpacity
+            style={styles.nextButton}
+            onPress={handleStartAnalysis}
+            disabled={isAnalyzing}
+          >
             <LinearGradient
               colors={['#8B5CF6', '#EC4899']}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               style={styles.buttonGradient}
             >
-              <Text style={styles.nextButtonText}>Next</Text>
+              <Text style={styles.nextButtonText}>
+                {isAnalyzing ? 'Analyzing...' : 'Start Skin Analysis'}
+              </Text>
             </LinearGradient>
           </TouchableOpacity>
         </View>
@@ -178,6 +264,9 @@ export default function PhotoScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    maxWidth: 500,
+    width: '100%',
+    alignSelf: 'center',
   },
   backButton: {
     position: 'absolute',
@@ -302,7 +391,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingTop: 16,
     paddingBottom: 44,
-    backgroundColor: 'rgba(255, 240, 245, 0.95)',
+    backgroundColor: 'transparent',
     alignItems: 'center',
   },
   nextButton: {

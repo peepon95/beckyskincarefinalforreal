@@ -7,13 +7,21 @@ import { useAuth } from '@/contexts/AuthContext';
 
 export default function Welcome() {
   const router = useRouter();
-  const { user, loading } = useAuth();
+  const { user, loading, hasCompletedOnboarding } = useAuth();
 
   useEffect(() => {
     if (!loading && user) {
-      router.replace('/home');
+      // User is logged in - check if they've completed onboarding
+      if (hasCompletedOnboarding === true) {
+        // Already completed onboarding - go to home
+        router.replace('/home');
+      } else if (hasCompletedOnboarding === false) {
+        // Haven't completed onboarding - show onboarding flow
+        router.replace('/onboarding/intro2');
+      }
+      // If hasCompletedOnboarding is null, we're still loading profile data
     }
-  }, [user, loading]);
+  }, [user, loading, hasCompletedOnboarding]);
 
   if (loading) {
     return (
@@ -70,6 +78,9 @@ export default function Welcome() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    maxWidth: 500,
+    width: '100%',
+    alignSelf: 'center',
   },
   loadingContainer: {
     flex: 1,

@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
+  Platform,
 } from 'react-native';
 import {
   User,
@@ -135,30 +136,37 @@ export default function Profile() {
   };
 
   const handleLogout = async () => {
-    Alert.alert(
-      'Log Out',
-      'Are you sure you want to log out?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Log Out',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await signOut();
-              router.replace('/auth');
-            } catch (error) {
-              console.error('Error logging out:', error);
-              setToast({
-                visible: true,
-                message: 'Failed to log out. Please try again.',
-                type: 'error',
-              });
-            }
+    if (Platform.OS === 'web') {
+      const confirmed = window.confirm('Are you sure you want to log out?');
+      if (confirmed) {
+        try {
+          await signOut();
+          router.replace('/auth');
+        } catch (error) {
+          console.error('Error signing out:', error);
+        }
+      }
+    } else {
+      Alert.alert(
+        'Log Out',
+        'Are you sure you want to log out?',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          {
+            text: 'Log Out',
+            style: 'destructive',
+            onPress: async () => {
+              try {
+                await signOut();
+                router.replace('/auth');
+              } catch (error) {
+                console.error('Error signing out:', error);
+              }
+            },
           },
-        },
-      ]
-    );
+        ]
+      );
+    }
   };
 
   const latestScan = getLatestScan();
@@ -343,18 +351,16 @@ export default function Profile() {
               <ChevronRight color="#9CA3AF" size={20} strokeWidth={2} />
             </TouchableOpacity>
 
-            {user && (
-              <TouchableOpacity
-                style={[styles.settingsItem, styles.settingsItemLast]}
-                onPress={handleLogout}
-              >
-                <View style={styles.settingsItemLeft}>
-                  <LogOut color="#EF4444" size={20} strokeWidth={2} />
-                  <Text style={[styles.settingsItemLabel, styles.logoutText]}>Log Out</Text>
-                </View>
-                <ChevronRight color="#EF4444" size={20} strokeWidth={2} />
-              </TouchableOpacity>
-            )}
+            <TouchableOpacity
+              style={[styles.settingsItem, styles.settingsItemLast]}
+              onPress={handleLogout}
+            >
+              <View style={styles.settingsItemLeft}>
+                <LogOut color="#EF4444" size={20} strokeWidth={2} />
+                <Text style={[styles.settingsItemLabel, styles.logoutText]}>Log Out</Text>
+              </View>
+              <ChevronRight color="#EF4444" size={20} strokeWidth={2} />
+            </TouchableOpacity>
           </View>
         </View>
 

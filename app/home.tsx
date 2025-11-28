@@ -60,13 +60,13 @@ export default function Home() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Header Section */}
+        {/* 1. Header Section */}
         <View style={styles.header}>
           <Text style={styles.greeting}>{getGreeting()}, there 💜</Text>
           <Text style={styles.subtext}>Here's your gentle skin space for today.</Text>
         </View>
 
-        {/* Main Hero Card */}
+        {/* 2. Check Your Skin Card */}
         <View style={styles.heroCard}>
           <View style={styles.iconCircle}>
             <Camera color="#8B5CF6" size={28} strokeWidth={2} />
@@ -77,7 +77,7 @@ export default function Home() {
             Upload a selfie for Becky's AI-powered skin analysis.
           </Text>
 
-          {/* Pill Tags */}
+          {/* Pills */}
           <View style={styles.pillsContainer}>
             <View style={styles.pill}>
               <Sparkles color="#8B5CF6" size={14} strokeWidth={2} />
@@ -93,7 +93,7 @@ export default function Home() {
             </View>
           </View>
 
-          {/* Primary CTA */}
+          {/* Gradient Button */}
           <TouchableOpacity
             style={styles.primaryButton}
             onPress={() => router.push('/onboarding/photo')}
@@ -110,31 +110,28 @@ export default function Home() {
           </TouchableOpacity>
         </View>
 
-        {/* Skin Summary Snapshot */}
-        {latestScan && (
-          <View style={styles.summaryStrip}>
-            <View style={styles.summaryPill}>
-              <Text style={styles.summaryLabel}>Skin Type</Text>
-              <Text style={styles.summaryValue}>{latestScan.skinAnalysis.skin_type}</Text>
-            </View>
-
-            {latestScan.skinAnalysis.healthScore && (
-              <View style={styles.summaryPill}>
-                <Text style={styles.summaryLabel}>Score</Text>
-                <Text style={styles.summaryValue}>{latestScan.skinAnalysis.healthScore}</Text>
-              </View>
-            )}
-
-            <View style={styles.summaryPill}>
-              <Text style={styles.summaryLabel}>Last Scan</Text>
-              <Text style={styles.summaryValue}>
-                {new Date(latestScan.created_at).toLocaleDateString('en-US', { day: 'numeric', month: 'short' })}
-              </Text>
-            </View>
+        {/* 3. Stat Bubbles */}
+        <View style={styles.summaryStrip}>
+          <View style={styles.summaryPill}>
+            <Text style={styles.summaryLabel}>SKIN HEALTH SCORE</Text>
+            <Text style={styles.summaryValue}>
+              {latestScan?.skinAnalysis?.healthScore || '70'}
+            </Text>
           </View>
-        )}
 
-        {/* Becky's Gentle Tip */}
+
+
+          <View style={styles.summaryPill}>
+            <Text style={styles.summaryLabel}>LAST SCAN</Text>
+            <Text style={styles.summaryValue}>
+              {latestScan
+                ? new Date(latestScan.created_at).toLocaleDateString('en-US', { day: 'numeric', month: 'short' })
+                : 'Nov 27'}
+            </Text>
+          </View>
+        </View>
+
+        {/* 4. Becky's Gentle Tip */}
         <View style={styles.tipCard}>
           <View style={styles.tipIcon}>
             <Text style={styles.tipEmoji}>🌙</Text>
@@ -147,7 +144,7 @@ export default function Home() {
           </View>
         </View>
 
-        {/* Saved Scans Section */}
+        {/* 5. Your Scan History */}
         {savedScans.length > 0 && (
           <View style={styles.savedScansSection}>
             <Text style={styles.sectionTitle}>Your Scan History</Text>
@@ -175,25 +172,10 @@ export default function Home() {
                     </View>
                   </View>
 
-                  {scan.photoUri && (
-                    <Image source={{ uri: scan.photoUri }} style={styles.scanThumbnail} />
-                  )}
+                  <View style={styles.scanThumbnail} />
                 </View>
               </TouchableOpacity>
             ))}
-          </View>
-        )}
-
-        {/* Empty State for First Time Users */}
-        {savedScans.length === 0 && (
-          <View style={styles.emptyState}>
-            <View style={styles.emptyIcon}>
-              <Sparkles color="#8B5CF6" size={48} strokeWidth={1.5} />
-            </View>
-            <Text style={styles.emptyTitle}>Begin Your Journey</Text>
-            <Text style={styles.emptyText}>
-              Take your first scan above to unlock personalized insights.
-            </Text>
           </View>
         )}
 
@@ -228,122 +210,109 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: 20,
-    maxWidth: 800,
+    maxWidth: 500,
     width: '100%',
     alignSelf: 'center',
+    paddingHorizontal: 16,
+    paddingTop: 24,
+    paddingBottom: 100,
   },
+
+  // 1. Header
   header: {
-    paddingHorizontal: 20,
-    paddingTop: 60,
-    paddingBottom: 24,
+    marginBottom: 24,
   },
   greeting: {
-    fontFamily: 'Lora-SemiBold',
+    fontFamily: 'Lora-Bold',
     fontSize: 28,
-    color: '#2C2C2C',
-    marginBottom: 6,
-    lineHeight: 36,
+    color: '#1F2937',
+    marginBottom: 4,
   },
   subtext: {
     fontFamily: 'Lora-Regular',
     fontSize: 15,
     color: '#6B7280',
-    lineHeight: 22,
   },
+
+  // 2. Hero Card
   heroCard: {
     backgroundColor: '#FFFFFF',
-    marginHorizontal: 20,
-    marginBottom: 20,
+    borderRadius: 20,
     padding: 24,
-    borderRadius: 24,
-    shadowColor: '#8B5CF6',
-    shadowOffset: { width: 0, height: 8 },
+    marginBottom: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
-    shadowRadius: 16,
-    elevation: 8,
+    shadowRadius: 12,
+    elevation: 3,
   },
   iconCircle: {
     width: 64,
     height: 64,
     borderRadius: 32,
     backgroundColor: '#F3E8FF',
-    justifyContent: 'center',
     alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: 16,
   },
   heroTitle: {
-    fontFamily: 'Lora-SemiBold',
+    fontFamily: 'Lora-Bold',
     fontSize: 24,
-    color: '#1A1A2E',
+    color: '#1F2937',
     marginBottom: 8,
   },
   heroDescription: {
     fontFamily: 'Lora-Regular',
     fontSize: 15,
     color: '#6B7280',
+    marginBottom: 20,
     lineHeight: 22,
-    marginBottom: 16,
   },
   pillsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-    marginBottom: 20,
+    gap: 12,
+    marginBottom: 24,
   },
   pill: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    backgroundColor: '#F9FAFB',
-    paddingVertical: 8,
-    paddingHorizontal: 14,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
+    gap: 8,
   },
   pillText: {
-    fontFamily: 'Lora-Medium',
-    fontSize: 13,
+    fontFamily: 'Lora-Regular',
+    fontSize: 14,
     color: '#4B5563',
   },
   primaryButton: {
-    height: 56,
-    borderRadius: 28,
-    shadowColor: '#8B5CF6',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 12,
-    elevation: 6,
+    borderRadius: 50,
+    overflow: 'hidden',
   },
   primaryButtonGradient: {
-    flex: 1,
-    justifyContent: 'center',
+    paddingVertical: 16,
+    paddingHorizontal: 32,
     alignItems: 'center',
-    borderRadius: 28,
+    justifyContent: 'center',
   },
   primaryButtonText: {
-    fontFamily: 'Lora-SemiBold',
+    fontFamily: 'Lora-Bold',
     fontSize: 16,
     color: '#FFFFFF',
-    letterSpacing: 0.3,
   },
+
+  // 3. Summary Strip (Stat Bubbles)
   summaryStrip: {
     flexDirection: 'row',
-    marginHorizontal: 20,
-    marginBottom: 16,
-    gap: 10,
+    gap: 12,
+    marginBottom: 24,
   },
   summaryPill: {
     flex: 1,
     backgroundColor: '#FFFFFF',
-    paddingVertical: 14,
-    paddingHorizontal: 12,
     borderRadius: 16,
+    padding: 16,
     alignItems: 'center',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.04,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
     shadowRadius: 8,
     elevation: 2,
   },
@@ -356,33 +325,32 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   summaryValue: {
-    fontFamily: 'Lora-SemiBold',
-    fontSize: 15,
-    color: '#1A1A2E',
+    fontFamily: 'Lora-Bold',
+    fontSize: 18,
+    color: '#1F2937',
   },
+
+  // 4. Tip Card
   tipCard: {
     backgroundColor: '#FFFFFF',
-    marginHorizontal: 20,
-    marginBottom: 24,
-    padding: 18,
-    borderRadius: 20,
+    borderRadius: 16,
+    padding: 20,
     flexDirection: 'row',
-    gap: 14,
+    gap: 16,
+    marginBottom: 24,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.04,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
     shadowRadius: 8,
     elevation: 2,
-    borderWidth: 1,
-    borderColor: '#F3E8FF',
   },
   tipIcon: {
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: '#FFF0F5',
-    justifyContent: 'center',
+    backgroundColor: '#FEF3C7',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   tipEmoji: {
     fontSize: 24,
@@ -391,9 +359,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   tipTitle: {
-    fontFamily: 'Lora-SemiBold',
-    fontSize: 15,
-    color: '#1A1A2E',
+    fontFamily: 'Lora-Bold',
+    fontSize: 16,
+    color: '#1F2937',
     marginBottom: 4,
   },
   tipText: {
@@ -402,56 +370,53 @@ const styles = StyleSheet.create({
     color: '#6B7280',
     lineHeight: 20,
   },
+
+  // 5. Scan History
   savedScansSection: {
-    paddingHorizontal: 20,
-    marginBottom: 16,
+    gap: 16,
   },
   sectionTitle: {
-    fontFamily: 'Lora-SemiBold',
+    fontFamily: 'Lora-Bold',
     fontSize: 20,
-    color: '#2C2C2C',
-    marginBottom: 16,
+    color: '#1F2937',
+    marginBottom: 8,
   },
   scanCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 20,
+    borderRadius: 16,
     padding: 16,
     marginBottom: 12,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.04,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
     shadowRadius: 8,
     elevation: 2,
-    borderWidth: 1,
-    borderColor: '#F3E8FF',
   },
   scanCardContent: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    gap: 12,
   },
   scanLeft: {
-    flex: 1,
     flexDirection: 'row',
-    alignItems: 'center',
     gap: 12,
+    flex: 1,
   },
   scanIconContainer: {
     width: 48,
     height: 48,
     borderRadius: 24,
     backgroundColor: '#F3E8FF',
-    justifyContent: 'center',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   scanDetails: {
     flex: 1,
   },
   scanTitle: {
-    fontFamily: 'Lora-SemiBold',
+    fontFamily: 'Lora-Bold',
     fontSize: 15,
-    color: '#1A1A2E',
+    color: '#1F2937',
     marginBottom: 4,
   },
   scanSubtext: {
@@ -461,43 +426,18 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   scanCTA: {
-    fontFamily: 'Lora-Medium',
+    fontFamily: 'Lora-Regular',
     fontSize: 13,
     color: '#8B5CF6',
   },
   scanThumbnail: {
     width: 80,
     height: 80,
-    borderRadius: 16,
+    borderRadius: 12,
     backgroundColor: '#E5E7EB',
   },
-  emptyState: {
-    alignItems: 'center',
-    paddingHorizontal: 40,
-    paddingVertical: 48,
-  },
-  emptyIcon: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: '#F3E8FF',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  emptyTitle: {
-    fontFamily: 'Lora-SemiBold',
-    fontSize: 20,
-    color: '#1A1A2E',
-    marginBottom: 8,
-  },
-  emptyText: {
-    fontFamily: 'Lora-Regular',
-    fontSize: 14,
-    color: '#6B7280',
-    textAlign: 'center',
-    lineHeight: 20,
-  },
+
+  // Bottom Navigation
   bottomNav: {
     position: 'absolute',
     bottom: 0,

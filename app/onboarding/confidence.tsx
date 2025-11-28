@@ -18,7 +18,7 @@ export default function ConfidenceScreen() {
     const handleNext = () => {
         if (selected) {
             updateData({ confidenceLevel: selected });
-            router.push('/onboarding/auth');
+            router.push('/onboarding/photo');
         }
     };
 
@@ -78,6 +78,9 @@ export default function ConfidenceScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        maxWidth: 500,
+        width: '100%',
+        alignSelf: 'center',
     },
     content: {
         flex: 1,
@@ -124,7 +127,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 24,
         paddingTop: 16,
         paddingBottom: 44,
-        backgroundColor: 'rgba(255, 240, 245, 0.95)',
+        backgroundColor: 'transparent',
     },
     nextButton: {
         height: 56,

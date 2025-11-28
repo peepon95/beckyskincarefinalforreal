@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Mail, Apple } from 'lucide-react-native';
+import { Mail } from 'lucide-react-native';
 
 export default function AuthScreen() {
     const router = useRouter();
@@ -27,26 +27,14 @@ export default function AuthScreen() {
                         <Mail color="#8B5CF6" size={24} />
                         <Text style={styles.authButtonText}>Continue with Email</Text>
                     </TouchableOpacity>
-
-                    <TouchableOpacity style={[styles.authButton, styles.appleButton]} onPress={handleContinue}>
-                        <Apple color="#FFFFFF" size={24} />
-                        <Text style={[styles.authButtonText, styles.appleButtonText]}>Continue with Apple</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity style={styles.authButton} onPress={handleContinue}>
-                        {/* Google Icon would go here, using a colored G for now */}
-                        <View style={styles.googleIcon}>
-                            <Text style={styles.googleText}>G</Text>
-                        </View>
-                        <Text style={styles.authButtonText}>Continue with Google</Text>
-                    </TouchableOpacity>
                 </View>
 
-                <TouchableOpacity onPress={() => router.push('/login')}>
+                {/* Login link temporarily disabled until login screen is implemented */}
+                {/* <TouchableOpacity onPress={() => router.push('/home')}>
                     <Text style={styles.loginText}>
                         Already have an account? <Text style={styles.loginLink}>Log in</Text>
                     </Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
             </View>
         </LinearGradient>
     );
@@ -104,23 +92,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#1A1A2E',
     },
-    appleButton: {
-        backgroundColor: '#000000',
-    },
-    appleButtonText: {
-        color: '#FFFFFF',
-    },
-    googleIcon: {
-        width: 24,
-        height: 24,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    googleText: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        color: '#EA4335',
-    },
+
     loginText: {
         fontFamily: 'Lora-Regular',
         fontSize: 16,

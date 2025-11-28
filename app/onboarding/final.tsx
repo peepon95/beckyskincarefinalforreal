@@ -2,16 +2,19 @@ import { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useOnboarding } from '@/contexts/OnboardingContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { Typewriter } from '@/components/Typewriter';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ArrowLeft } from 'lucide-react-native';
 import { analyzeSkin } from '@/src/services/api';
+import { markOnboardingComplete } from '@/src/services/supabase';
 import storage from '@/src/utils/storage';
 import SkinAnalysisLoader from '@/components/SkinAnalysisLoader';
 
 export default function FinalOnboarding() {
   const router = useRouter();
   const { data } = useOnboarding();
+  const { user } = useAuth();
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   const handleStartAnalysis = async () => {
@@ -36,10 +39,21 @@ export default function FinalOnboarding() {
       await storage.saveSkinAnalysis(dataToSave);
       console.log('💾 Results saved to storage');
 
+      // Mark onboarding as complete if user is logged in
+      if (user) {
+        try {
+          await markOnboardingComplete(user.id);
+          console.log('✅ Onboarding marked as complete');
+        } catch (error) {
+          console.error('Error marking onboarding complete:', error);
+          // Don't block navigation if this fails
+        }
+      }
+
       // Wait a bit for the loader animation
       setTimeout(() => {
         setIsAnalyzing(false);
-        router.push('/skin-results');
+        router.push('/home');
       }, 1000);
 
     } catch (error: any) {
@@ -57,8 +71,8 @@ export default function FinalOnboarding() {
       if (error?.message) {
         // Use the error message if it's already user-friendly
         if (error.message.includes("Becky couldn't") ||
-            error.message.includes('Please') ||
-            error.message.includes('try again')) {
+          error.message.includes('Please') ||
+          error.message.includes('try again')) {
           errorMessage = error.message;
         } else if (error.message.includes('quota') || error.message.includes('429') || error.message.includes('Rate limit')) {
           errorMessage = 'Rate limit exceeded. Please wait a moment and try again.';

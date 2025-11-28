@@ -14,6 +14,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#F2E8D8',
     justifyContent: 'center',
     alignItems: 'center',
+    maxWidth: 500,
+    width: '100%',
+    alignSelf: 'center',
   },
   text: {
     fontSize: 24,

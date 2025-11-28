@@ -108,7 +108,7 @@ async function callOpenRouter(prompt, imageBase64, model) {
 
     // Handle specific error codes
     if (response.status === 401) {
-      throw new Error('API authentication failed. Please contact support.');
+      throw new Error('Invalid API Key. Please check your OpenRouter key in .env file.');
     } else if (response.status === 429) {
       throw new Error('Rate limit exceeded. Please wait a moment and try again.');
     } else if (response.status === 503) {

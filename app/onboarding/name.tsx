@@ -78,6 +78,9 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 24,
     paddingTop: 80,
+    maxWidth: 500,
+    width: '100%',
+    alignSelf: 'center',
   },
   textContainer: {
     marginBottom: 24,
@@ -109,7 +112,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingTop: 16,
     paddingBottom: 44,
-    backgroundColor: 'rgba(255, 240, 245, 0.95)',
+    backgroundColor: 'transparent',
+    maxWidth: 500,
+    width: '100%',
+    alignSelf: 'center',
   },
   primaryButton: {
     height: 56,

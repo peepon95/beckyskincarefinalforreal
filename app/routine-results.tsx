@@ -358,6 +358,9 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingBottom: 40,
+    maxWidth: 500,
+    width: '100%',
+    alignSelf: 'center',
   },
   header: {
     flexDirection: 'row',
@@ -794,8 +797,9 @@ const styles = StyleSheet.create({
   bottomActions: {
     position: 'absolute',
     bottom: 0,
-    left: 0,
-    right: 0,
+    width: '100%',
+    maxWidth: 500,
+    alignSelf: 'center',
     backgroundColor: '#FFFFFF',
     padding: 16,
     paddingBottom: 40,

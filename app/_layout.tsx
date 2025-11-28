@@ -7,6 +7,7 @@ import { AuthProvider } from '@/contexts/AuthContext';
 import { useFonts, Lora_400Regular, Lora_500Medium, Lora_600SemiBold, Lora_700Bold } from '@expo-google-fonts/lora';
 import { SplashScreen } from 'expo-router';
 
+
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {

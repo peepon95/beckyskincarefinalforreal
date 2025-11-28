@@ -17,7 +17,7 @@ import { useAuth } from '../contexts/AuthContext';
 
 export default function Auth() {
   const router = useRouter();
-  const { signInWithEmail, signUpWithEmail, signInWithGoogle, signInWithApple } = useAuth();
+  const { signInWithEmail, signUpWithEmail } = useAuth();
 
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState('');
@@ -47,185 +47,139 @@ export default function Auth() {
     }
   };
 
-  const handleGoogleSignIn = async () => {
-    setLoading(true);
-    setError('');
-    const { error } = await signInWithGoogle();
-    setLoading(false);
 
-    if (error) {
-      setError(error.message);
-    }
-  };
-
-  const handleAppleSignIn = async () => {
-    setLoading(true);
-    setError('');
-    const { error } = await signInWithApple();
-    setLoading(false);
-
-    if (error) {
-      setError(error.message);
-    }
-  };
 
   return (
     <LinearGradient
       colors={['#F8E8FF', '#FFF0F5', '#F3E8FF']}
       style={styles.container}
     >
-      {/* Back Button */}
-      <TouchableOpacity
-        style={styles.backButton}
-        onPress={() => router.back()}
-        activeOpacity={0.7}
-      >
-        <ArrowLeft color="#2C2C2C" size={24} strokeWidth={2} />
-      </TouchableOpacity>
-
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.keyboardView}
-      >
-        <ScrollView
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
+      <View style={styles.contentContainer}>
+        {/* Back Button */}
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => router.back()}
+          activeOpacity={0.7}
         >
-          {/* Header */}
-          <View style={styles.header}>
-            <Text style={styles.greeting}>Welcome to Becky 💜</Text>
-            <Text style={styles.subtext}>
-              Your gentle companion for healthier, happier skin.
-            </Text>
-          </View>
+          <ArrowLeft color="#2C2C2C" size={24} strokeWidth={2} />
+        </TouchableOpacity>
 
-          {/* Auth Card */}
-          <View style={styles.authCard}>
-            <Text style={styles.authTitle}>
-              {isSignUp ? 'Create Account' : 'Sign In'}
-            </Text>
-
-            {/* Email Input */}
-            <View style={styles.inputContainer}>
-              <View style={styles.inputIconContainer}>
-                <Mail color="#8B5CF6" size={20} strokeWidth={2} />
-              </View>
-              <TextInput
-                style={styles.input}
-                placeholder="Email"
-                placeholderTextColor="#9CA3AF"
-                value={email}
-                onChangeText={setEmail}
-                autoCapitalize="none"
-                keyboardType="email-address"
-                editable={!loading}
-              />
-            </View>
-
-            {/* Password Input */}
-            <View style={styles.inputContainer}>
-              <View style={styles.inputIconContainer}>
-                <Lock color="#8B5CF6" size={20} strokeWidth={2} />
-              </View>
-              <TextInput
-                style={styles.input}
-                placeholder="Password"
-                placeholderTextColor="#9CA3AF"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-                editable={!loading}
-              />
-            </View>
-
-            {/* Error Message */}
-            {error ? (
-              <View style={styles.errorContainer}>
-                <Text style={styles.errorText}>{error}</Text>
-              </View>
-            ) : null}
-
-            {/* Submit Button */}
-            <TouchableOpacity
-              style={styles.primaryButton}
-              onPress={handleEmailAuth}
-              disabled={loading}
-              activeOpacity={0.9}
-            >
-              <LinearGradient
-                colors={['#8B5CF6', '#EC4899']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-                style={styles.primaryButtonGradient}
-              >
-                {loading ? (
-                  <ActivityIndicator color="#FFFFFF" />
-                ) : (
-                  <>
-                    <Text style={styles.primaryButtonText}>
-                      {isSignUp ? 'Create Account' : 'Sign In'}
-                    </Text>
-                    <ArrowRight color="#FFFFFF" size={20} strokeWidth={2} />
-                  </>
-                )}
-              </LinearGradient>
-            </TouchableOpacity>
-
-            {/* Toggle Sign Up / Sign In */}
-            <TouchableOpacity
-              style={styles.toggleButton}
-              onPress={() => {
-                setIsSignUp(!isSignUp);
-                setError('');
-              }}
-              disabled={loading}
-            >
-              <Text style={styles.toggleText}>
-                {isSignUp
-                  ? 'Already have an account? Sign in'
-                  : "Don't have an account? Sign up"}
-              </Text>
-            </TouchableOpacity>
-
-            {/* Divider */}
-            <View style={styles.divider}>
-              <View style={styles.dividerLine} />
-              <Text style={styles.dividerText}>or continue with</Text>
-              <View style={styles.dividerLine} />
-            </View>
-
-            {/* OAuth Buttons */}
-            <View style={styles.oauthContainer}>
-              <TouchableOpacity
-                style={styles.oauthButton}
-                onPress={handleGoogleSignIn}
-                disabled={loading}
-                activeOpacity={0.7}
-              >
-                <Text style={styles.oauthButtonText}>Google</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={styles.oauthButton}
-                onPress={handleAppleSignIn}
-                disabled={loading}
-                activeOpacity={0.7}
-              >
-                <Text style={styles.oauthButtonText}>Apple</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          {/* Skip Option */}
-          <TouchableOpacity
-            style={styles.skipButton}
-            onPress={() => router.replace('/index')}
-            disabled={loading}
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={styles.keyboardView}
+        >
+          <ScrollView
+            contentContainerStyle={styles.scrollContent}
+            showsVerticalScrollIndicator={false}
           >
-            <Text style={styles.skipText}>Continue without account</Text>
-          </TouchableOpacity>
-        </ScrollView>
-      </KeyboardAvoidingView>
+            {/* Header */}
+            <View style={styles.header}>
+              <Text style={styles.greeting}>Welcome to Becky 💜</Text>
+              <Text style={styles.subtext}>
+                Your gentle companion for healthier, happier skin.
+              </Text>
+            </View>
+
+            {/* Auth Card */}
+            <View style={styles.authCard}>
+              <Text style={styles.authTitle}>
+                {isSignUp ? 'Create Account' : 'Sign In'}
+              </Text>
+
+              {/* Email Input */}
+              <View style={styles.inputContainer}>
+                <View style={styles.inputIconContainer}>
+                  <Mail color="#8B5CF6" size={20} strokeWidth={2} />
+                </View>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Email"
+                  placeholderTextColor="#9CA3AF"
+                  value={email}
+                  onChangeText={setEmail}
+                  autoCapitalize="none"
+                  keyboardType="email-address"
+                  editable={!loading}
+                />
+              </View>
+
+              {/* Password Input */}
+              <View style={styles.inputContainer}>
+                <View style={styles.inputIconContainer}>
+                  <Lock color="#8B5CF6" size={20} strokeWidth={2} />
+                </View>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Password"
+                  placeholderTextColor="#9CA3AF"
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry
+                  editable={!loading}
+                />
+              </View>
+
+              {/* Error Message */}
+              {error ? (
+                <View style={styles.errorContainer}>
+                  <Text style={styles.errorText}>{error}</Text>
+                </View>
+              ) : null}
+
+              {/* Submit Button */}
+              <TouchableOpacity
+                style={styles.primaryButton}
+                onPress={handleEmailAuth}
+                disabled={loading}
+                activeOpacity={0.9}
+              >
+                <LinearGradient
+                  colors={['#8B5CF6', '#EC4899']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                  style={styles.primaryButtonGradient}
+                >
+                  {loading ? (
+                    <ActivityIndicator color="#FFFFFF" />
+                  ) : (
+                    <>
+                      <Text style={styles.primaryButtonText}>
+                        {isSignUp ? 'Create Account' : 'Sign In'}
+                      </Text>
+                      <ArrowRight color="#FFFFFF" size={20} strokeWidth={2} />
+                    </>
+                  )}
+                </LinearGradient>
+              </TouchableOpacity>
+
+              {/* Toggle Sign Up / Sign In */}
+              <TouchableOpacity
+                style={styles.toggleButton}
+                onPress={() => {
+                  setIsSignUp(!isSignUp);
+                  setError('');
+                }}
+                disabled={loading}
+              >
+                <Text style={styles.toggleText}>
+                  {isSignUp
+                    ? 'Already have an account? Sign in'
+                    : "Don't have an account? Sign up"}
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* Skip Option */}
+            <TouchableOpacity
+              style={styles.skipButton}
+              onPress={() => router.replace('/onboarding/intro2')}
+              disabled={loading}
+            >
+              <Text style={styles.skipText}>Continue without account</Text>
+            </TouchableOpacity>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </View>
     </LinearGradient>
   );
 }
@@ -233,6 +187,13 @@ export default function Auth() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  contentContainer: {
+    flex: 1,
+    width: '100%',
+    maxWidth: 500,
+    alignSelf: 'center',
+    position: 'relative',
   },
   backButton: {
     position: 'absolute',
@@ -259,9 +220,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 40,
     paddingHorizontal: 20,
-    maxWidth: 500,
     width: '100%',
-    alignSelf: 'center',
   },
   header: {
     marginBottom: 32,

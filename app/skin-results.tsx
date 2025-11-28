@@ -69,13 +69,32 @@ export default function SkinResults() {
   const getSeverityColor = (severity: string) => {
     switch (severity?.toLowerCase()) {
       case 'severe':
-        return '#EF4444';
+      case 'high':
+        return '#FEE2E2';
       case 'moderate':
+      case 'medium':
+        return '#FEF3C7';
+      case 'mild':
+      case 'low':
+        return '#F3F4F6';
+      default:
+        return '#F3F4F6';
+    }
+  };
+
+  const getSeverityTextColor = (severity: string) => {
+    switch (severity?.toLowerCase()) {
+      case 'severe':
+      case 'high':
+        return '#DC2626';
+      case 'moderate':
+      case 'medium':
         return '#F59E0B';
       case 'mild':
-        return '#10B981';
+      case 'low':
+        return '#4B5563';
       default:
-        return '#6B7280';
+        return '#4B5563';
     }
   };
 
@@ -110,8 +129,10 @@ export default function SkinResults() {
         {/* Summary Pills */}
         <View style={styles.pillsRow}>
           <View style={styles.pillContainer}>
-            <Text style={styles.pillLabel}>SKIN TYPE</Text>
-            <Text style={styles.pillValue}>{results.skin_type || 'Unknown'}</Text>
+            <Text style={styles.pillLabel}>SKIN HEALTH SCORE</Text>
+            <Text style={styles.pillValue}>
+              {results.healthScore || '70'}
+            </Text>
           </View>
 
           {results.key_concerns && results.key_concerns.length > 0 && (
@@ -147,7 +168,7 @@ export default function SkinResults() {
                       { backgroundColor: getSeverityColor(concern.severity) }
                     ]}
                   >
-                    <Text style={styles.severityText}>{concern.severity}</Text>
+                    <Text style={[styles.severityText, { color: getSeverityTextColor(concern.severity) }]}>{concern.severity}</Text>
                   </View>
                 </View>
                 <Text style={styles.concernLocation}>📍 {concern.location}</Text>
@@ -191,18 +212,6 @@ export default function SkinResults() {
           </View>
         )}
 
-        {/* General Tips */}
-        {results.general_recommendations && results.general_recommendations.length > 0 && (
-          <View style={styles.sectionCard}>
-            <Text style={styles.sectionTitle}>General Tips</Text>
-            {results.general_recommendations.map((tip: string, index: number) => (
-              <View key={index} style={styles.tipItem}>
-                <CheckCircle color="#10B981" size={18} strokeWidth={2} />
-                <Text style={styles.tipText}>{tip}</Text>
-              </View>
-            ))}
-          </View>
-        )}
 
         {/* Dermatology Advice */}
         {results.dermatology_advice && (
@@ -249,6 +258,9 @@ export default function SkinResults() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    maxWidth: 500,
+    width: '100%',
+    alignSelf: 'center',
   },
   scrollView: {
     flex: 1,
@@ -398,7 +410,7 @@ const styles = StyleSheet.create({
   severityText: {
     fontFamily: 'Lora-SemiBold',
     fontSize: 11,
-    color: '#FFFFFF',
+    color: '#1F2937',
   },
   concernLocation: {
     fontFamily: 'Lora-Regular',
@@ -530,7 +542,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: 'rgba(255, 240, 245, 0.95)',
+    backgroundColor: '#FFFFFF',
     paddingHorizontal: 20,
     paddingTop: 16,
     paddingBottom: 44,
