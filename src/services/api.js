@@ -36,10 +36,27 @@ export function fileToBase64(file) {
 }
 
 async function callOpenRouter(prompt, imageBase64, model) {
-  // Check API key
+  // Enhanced API key check with better logging
+  const apiKeyStatus = {
+    exists: !!OPENROUTER_API_KEY,
+    isPlaceholder: OPENROUTER_API_KEY === 'your_openrouter_api_key_here',
+    startsWithSkOr: OPENROUTER_API_KEY?.startsWith('sk-or-'),
+    length: OPENROUTER_API_KEY?.length || 0,
+    firstChars: OPENROUTER_API_KEY?.substring(0, 8) || 'N/A',
+    lastChars: OPENROUTER_API_KEY?.substring(OPENROUTER_API_KEY.length - 4) || 'N/A'
+  };
+
+  console.log('🔐 API Key Status:', apiKeyStatus);
+
   if (!OPENROUTER_API_KEY || OPENROUTER_API_KEY === 'your_openrouter_api_key_here') {
     console.error('❌ OpenRouter API key is missing or invalid');
+    console.error('💡 Set EXPO_PUBLIC_OPENROUTER_API_KEY in your environment');
     throw new Error('API configuration error. Please contact support.');
+  }
+
+  if (!OPENROUTER_API_KEY.startsWith('sk-or-')) {
+    console.error('❌ API key format is invalid (should start with sk-or-)');
+    throw new Error('Invalid API key format. Please check your configuration.');
   }
 
   // Validate inputs
@@ -118,7 +135,9 @@ async function callOpenRouter(prompt, imageBase64, model) {
 
     // Handle specific error codes
     if (response.status === 401) {
-      throw new Error('Invalid API Key. Please check your OpenRouter key in .env file.');
+      console.error('❌ 401 Unauthorized - API key is invalid or expired');
+      console.error('💡 Check your OpenRouter API key at https://openrouter.ai/keys');
+      throw new Error('Invalid API Key. Please check your OpenRouter key configuration.');
     } else if (response.status === 429) {
       throw new Error('Rate limit exceeded. Please wait a moment and try again.');
     } else if (response.status === 503) {
