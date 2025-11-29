@@ -105,16 +105,25 @@ async function callGoogleAI(prompt, imageBase64, model) {
   let response;
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 30000);
+const timeoutId = setTimeout(() => controller.abort(), 30000);
 
-    response = await fetch(`${GOOGLE_AI_API_URL}/${model}:generateContent?key=${trimmedKey}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(requestBody),
-      signal: controller.signal
-    });
+response = await fetch(
+  `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
+  {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-goog-api-key': trimmedKey,
+    },
+    body: JSON.stringify(requestBody),
+    signal: controller.signal,
+  }
+);
+if (!response.ok) {
+  const errorText = await response.text().catch(() => '');
+  console.error('❌ Gemini API error:', response.status, errorText);
+  throw new Error("Becky couldn't analyse your skin right now. Please contact support.");
+}
 
     clearTimeout(timeoutId);
   } catch (networkError) {
