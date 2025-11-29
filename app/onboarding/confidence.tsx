@@ -2,6 +2,8 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useOnboarding } from '@/contexts/OnboardingContext';
+import { useAuth } from '@/contexts/AuthContext';
+import { markOnboardingComplete } from '@/src/services/supabase';
 import { useState } from 'react';
 
 const CONFIDENCE_LEVELS = [
@@ -13,11 +15,24 @@ const CONFIDENCE_LEVELS = [
 export default function ConfidenceScreen() {
     const router = useRouter();
     const { updateData } = useOnboarding();
+    const { user } = useAuth();
     const [selected, setSelected] = useState<string | null>(null);
 
-    const handleNext = () => {
+    const handleNext = async () => {
         if (selected) {
             updateData({ confidenceLevel: selected });
+
+            // Mark onboarding as complete for logged-in users
+            if (user) {
+                try {
+                    await markOnboardingComplete(user.id);
+                    console.log('✅ Onboarding marked as complete');
+                } catch (error) {
+                    console.error('Error marking onboarding complete:', error);
+                    // Don't block navigation if this fails
+                }
+            }
+
             router.push('/onboarding/photo');
         }
     };

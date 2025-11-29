@@ -136,12 +136,17 @@ export default function Profile() {
   };
 
   const handleLogout = async () => {
+    console.log('Logout clicked');
     if (Platform.OS === 'web') {
       const confirmed = window.confirm('Are you sure you want to log out?');
+      console.log('Logout confirmed:', confirmed);
       if (confirmed) {
         try {
+          console.log('Calling signOut...');
           await signOut();
-          router.replace('/auth');
+          console.log('SignOut complete, navigating to /');
+          // Use replace instead of push to prevent back navigation
+          router.replace('/');
         } catch (error) {
           console.error('Error signing out:', error);
         }
@@ -158,7 +163,7 @@ export default function Profile() {
             onPress: async () => {
               try {
                 await signOut();
-                router.replace('/auth');
+                router.replace('/');
               } catch (error) {
                 console.error('Error signing out:', error);
               }
@@ -408,7 +413,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingTop: 60,
-    paddingBottom: 20,
+    paddingBottom: 100,
     maxWidth: 800,
     width: '100%',
     alignSelf: 'center',
@@ -655,6 +660,8 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
+    width: '100%',
+    alignSelf: 'stretch',
     height: 80,
     backgroundColor: '#FFFFFF',
     flexDirection: 'row',

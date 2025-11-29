@@ -17,6 +17,7 @@ export default function PhotoScreen() {
   const [photoUri, setPhotoUri] = useState<string>('');
   const [photoBase64, setPhotoBase64] = useState<string>('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
 
   const requestCameraPermission = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
@@ -76,6 +77,38 @@ export default function PhotoScreen() {
     }
   };
 
+  const handleDragOver = (e: any) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: any) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = async (e: any) => {
+    e.preventDefault();
+    setIsDragging(false);
+
+    const files = e.dataTransfer?.files;
+    if (!files || files.length === 0) return;
+
+    const file = files[0];
+    if (!file.type.startsWith('image/')) {
+      Alert.alert('Invalid File', 'Please drop an image file');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const base64 = event.target?.result as string;
+      setPhotoUri(base64);
+      setPhotoBase64(base64);
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleRetake = () => {
     setPhotoUri('');
     setPhotoBase64('');
@@ -108,6 +141,16 @@ export default function PhotoScreen() {
 
       await storage.saveSkinAnalysis(dataToSave);
       console.log('💾 Results saved to storage');
+
+      // Save to scan history
+      const scanToSave = {
+        ...dataToSave,
+        unique_id: Date.now().toString(),
+        display_title: 'Skin Analysis',
+        created_at: new Date().toISOString(),
+      };
+      await storage.saveScan(scanToSave);
+      console.log('💾 Scan added to history');
 
       // Wait a bit for the loader animation
       setTimeout(() => {
@@ -214,7 +257,20 @@ export default function PhotoScreen() {
                 </TouchableOpacity>
               </View>
             ) : (
-              <View style={styles.actionsContainer}>
+              <View
+                {...({
+                  style: [styles.actionsContainer, isDragging && styles.draggingContainer],
+                  onDragOver: handleDragOver,
+                  onDragLeave: handleDragLeave,
+                  onDrop: handleDrop,
+                } as any)}
+              >
+                {isDragging && (
+                  <View style={styles.dropZoneOverlay}>
+                    <Upload color="#8B5CF6" size={48} />
+                    <Text style={styles.dropZoneText}>Drop your image here</Text>
+                  </View>
+                )}
                 <TouchableOpacity style={styles.primaryAction} onPress={handleOpenCamera}>
                   <LinearGradient
                     colors={['#8B5CF6', '#EC4899']}
@@ -410,5 +466,29 @@ const styles = StyleSheet.create({
     fontFamily: 'Lora-SemiBold',
     color: '#FFFFFF',
     fontSize: 16,
+  },
+  draggingContainer: {
+    borderColor: '#8B5CF6',
+    borderWidth: 2,
+    borderStyle: 'dashed',
+    backgroundColor: 'rgba(139, 92, 246, 0.05)',
+  },
+  dropZoneOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    borderRadius: 20,
+    zIndex: 10,
+  },
+  dropZoneText: {
+    fontFamily: 'Lora-Medium',
+    fontSize: 18,
+    color: '#8B5CF6',
+    marginTop: 12,
   },
 });

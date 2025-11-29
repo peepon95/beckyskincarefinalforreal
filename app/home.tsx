@@ -115,7 +115,7 @@ export default function Home() {
           <View style={styles.summaryPill}>
             <Text style={styles.summaryLabel}>SKIN HEALTH SCORE</Text>
             <Text style={styles.summaryValue}>
-              {latestScan?.skinAnalysis?.healthScore || '70'}
+              {latestScan?.healthScore || '70'}
             </Text>
           </View>
 
@@ -153,7 +153,7 @@ export default function Home() {
                 key={scan.unique_id}
                 style={styles.scanCard}
                 onPress={() => router.push({
-                  pathname: '/saved-scan',
+                  pathname: '/skin-results',
                   params: { scanId: scan.unique_id }
                 })}
                 activeOpacity={0.7}
@@ -164,9 +164,9 @@ export default function Home() {
                       <Camera color="#8B5CF6" size={20} strokeWidth={2} />
                     </View>
                     <View style={styles.scanDetails}>
-                      <Text style={styles.scanTitle}>{scan.display_title}</Text>
+                      <Text style={styles.scanTitle}>{scan.display_title || 'Skin Analysis'}</Text>
                       <Text style={styles.scanSubtext}>
-                        {scan.skinAnalysis.skin_type} · {scan.skinAnalysis.key_concerns?.[0]?.name || 'No concerns'}
+                        {scan.skin_type || 'Unknown'} · {scan.key_concerns?.[0]?.name || 'No concerns'}
                       </Text>
                       <Text style={styles.scanCTA}>Tap to view details</Text>
                     </View>
@@ -215,7 +215,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     paddingHorizontal: 16,
     paddingTop: 24,
-    paddingBottom: 100,
+    paddingBottom: 120,
   },
 
   // 1. Header
@@ -443,6 +443,8 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
+    width: '100%',
+    alignSelf: 'stretch',
     height: 80,
     backgroundColor: '#FFFFFF',
     flexDirection: 'row',

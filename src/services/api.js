@@ -1,22 +1,23 @@
 // Get API key from environment - try multiple sources for compatibility
-const OPENROUTER_API_KEY =
-  process.env.EXPO_PUBLIC_OPENROUTER_API_KEY ||
-  (typeof window !== 'undefined' && window._env_?.EXPO_PUBLIC_OPENROUTER_API_KEY);
+const GOOGLE_AI_KEY =
+  process.env.EXPO_PUBLIC_GOOGLE_AI_KEY ||
+  (typeof window !== 'undefined' && window._env_?.EXPO_PUBLIC_GOOGLE_AI_KEY);
 
-const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
-const SKIN_ANALYSIS_MODEL = 'google/gemini-2.5-flash';
-const PRODUCT_ANALYSIS_MODEL = 'google/gemini-2.5-flash';
+const GOOGLE_AI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models';
+const SKIN_ANALYSIS_MODEL = 'gemini-2.5-flash';
+const PRODUCT_ANALYSIS_MODEL = 'gemini-2.5-flash';
 
 // Log API key status on module load
-console.log('🔑 API Key Check:');
-console.log('  - Available:', OPENROUTER_API_KEY ? 'YES' : 'NO');
-console.log('  - Length:', OPENROUTER_API_KEY?.length || 0);
-console.log('  - Starts with sk-or:', OPENROUTER_API_KEY?.startsWith('sk-or') ? 'YES' : 'NO');
-console.log('  - process.env keys:', Object.keys(process.env).filter(k => k.includes('OPENROUTER')));
+console.log('🔑 Google AI Key Check:');
+console.log('  - Available:', GOOGLE_AI_KEY ? 'YES' : 'NO');
+console.log('  - Length:', GOOGLE_AI_KEY?.length || 0);
+console.log('  - Starts with AIza:', GOOGLE_AI_KEY?.startsWith('AIza') ? 'YES' : 'NO');
+console.log('  - process.env keys:', Object.keys(process.env).filter(k => k.includes('GOOGLE')));
 
-if (!OPENROUTER_API_KEY || OPENROUTER_API_KEY === 'your_openrouter_api_key_here') {
-  console.error('❌ OpenRouter API key is missing or invalid!');
-  console.error('❌ Set EXPO_PUBLIC_OPENROUTER_API_KEY in your .env file');
+if (!GOOGLE_AI_KEY || GOOGLE_AI_KEY === 'your_google_ai_key_here') {
+  console.error('❌ Google AI API key is missing or invalid!');
+  console.error('❌ Set EXPO_PUBLIC_GOOGLE_AI_KEY in your .env file');
+  console.error('❌ Get your key at: https://aistudio.google.com/app/apikey');
 }
 
 function stripMarkdown(text) {
@@ -35,31 +36,20 @@ export function fileToBase64(file) {
   });
 }
 
-async function callOpenRouter(prompt, imageBase64, model) {
-  // Enhanced API key check with better logging
-  const apiKeyStatus = {
-    exists: !!OPENROUTER_API_KEY,
-    isPlaceholder: OPENROUTER_API_KEY === 'your_openrouter_api_key_here',
-    startsWithSkOr: OPENROUTER_API_KEY?.startsWith('sk-or-'),
-    length: OPENROUTER_API_KEY?.length || 0,
-    firstChars: OPENROUTER_API_KEY?.substring(0, 8) || 'N/A',
-    lastChars: OPENROUTER_API_KEY?.substring(OPENROUTER_API_KEY.length - 4) || 'N/A'
-  };
+async function callGoogleAI(prompt, imageBase64, model) {
+  // Enhanced API key check
+  const trimmedKey = GOOGLE_AI_KEY?.trim();
 
-  console.log('🔐 API Key Status:', apiKeyStatus);
-
-  if (!OPENROUTER_API_KEY || OPENROUTER_API_KEY === 'your_openrouter_api_key_here') {
-    console.error('❌ OpenRouter API key is missing or invalid');
-    console.error('💡 Set EXPO_PUBLIC_OPENROUTER_API_KEY in your environment');
-    throw new Error('API configuration error. Please contact support.');
+  if (!GOOGLE_AI_KEY || GOOGLE_AI_KEY === 'your_google_ai_key_here') {
+    console.error('❌ Google AI API key is missing or invalid');
+    throw new Error('API configuration error. Please set up your Google AI key.');
   }
 
-  if (!OPENROUTER_API_KEY.startsWith('sk-or-')) {
-    console.error('❌ API key format is invalid (should start with sk-or-)');
-    throw new Error('Invalid API key format. Please check your configuration.');
+  if (!trimmedKey.startsWith('AIza')) {
+    console.error('❌ API key format is invalid (should start with AIza)');
+    throw new Error('Invalid API key format. Please check your Google AI key.');
   }
 
-  // Validate inputs
   if (!imageBase64) {
     throw new Error('No image provided');
   }
@@ -68,49 +58,53 @@ async function callOpenRouter(prompt, imageBase64, model) {
     throw new Error('No analysis prompt provided');
   }
 
-  const messages = [
-    {
-      role: 'user',
-      content: [
+  // Detect mime type from base64 string
+  let mimeType = "image/jpeg";
+  if (imageBase64.startsWith("data:image/png")) {
+    mimeType = "image/png";
+  } else if (imageBase64.startsWith("data:image/webp")) {
+    mimeType = "image/webp";
+  } else if (imageBase64.startsWith("data:image/heic")) {
+    mimeType = "image/heic";
+  }
+
+  // Extract base64 data without the data:image prefix
+  const base64Data = imageBase64.split(',')[1] || imageBase64;
+
+  const requestBody = {
+    contents: [{
+      parts: [
+        { text: prompt },
         {
-          type: 'text',
-          text: prompt
-        },
-        {
-          type: 'image_url',
-          image_url: {
-            url: imageBase64
+          inline_data: {
+            mime_type: mimeType,
+            data: base64Data
           }
         }
       ]
+    }],
+    generationConfig: {
+      temperature: 0.7,
+      maxOutputTokens: 8000,
     }
-  ];
+  };
 
-  console.log('📡 Calling OpenRouter API');
-  console.log('🔑 OpenRouter endpoint:', OPENROUTER_API_URL);
-  console.log('🔑 API Key present:', OPENROUTER_API_KEY ? 'YES' : 'NO');
+  console.log('📡 Calling Google AI API');
+  console.log('🔑 API Key present:', GOOGLE_AI_KEY ? 'YES' : 'NO');
   console.log('📊 Model:', model);
+  console.log('🖼️ Image Type:', mimeType);
 
   let response;
   try {
-    // Create abort controller for timeout
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+    const timeoutId = setTimeout(() => controller.abort(), 30000);
 
-    response = await fetch(OPENROUTER_API_URL, {
+    response = await fetch(`${GOOGLE_AI_API_URL}/${model}:generateContent?key=${trimmedKey}`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
         'Content-Type': 'application/json',
-        'HTTP-Referer': 'https://skincare-app.local',
-        'X-Title': 'Becky Skincare App'
       },
-      body: JSON.stringify({
-        model: model,
-        messages: messages,
-        temperature: 0.7,
-        max_tokens: 8000
-      }),
+      body: JSON.stringify(requestBody),
       signal: controller.signal
     });
 
@@ -131,17 +125,17 @@ async function callOpenRouter(prompt, imageBase64, model) {
       errorData = {};
     }
 
-    console.error('❌ OpenRouter API error:', response.status, errorData);
+    console.error('❌ Google AI API error:', response.status, errorData);
 
-    // Handle specific error codes
-    if (response.status === 401) {
-      console.error('❌ 401 Unauthorized - API key is invalid or expired');
-      console.error('💡 Check your OpenRouter API key at https://openrouter.ai/keys');
-      throw new Error('Invalid API Key. Please check your OpenRouter key configuration.');
+    if (response.status === 400) {
+      const errorMessage = errorData.error?.message || 'Invalid request format';
+      console.error('❌ Detailed 400 Error:', errorMessage);
+      throw new Error(`Request failed: ${errorMessage}`);
+    } else if (response.status === 403) {
+      console.error('💡 Check your Google AI key at https://aistudio.google.com/app/apikey');
+      throw new Error('Invalid API Key. Please check your Google AI key configuration.');
     } else if (response.status === 429) {
       throw new Error('Rate limit exceeded. Please wait a moment and try again.');
-    } else if (response.status === 503) {
-      throw new Error('Service temporarily unavailable. Please try again in a moment.');
     } else if (response.status >= 500) {
       throw new Error('Server error. Please try again later.');
     }
@@ -157,14 +151,19 @@ async function callOpenRouter(prompt, imageBase64, model) {
     throw new Error('Invalid response from server. Please try again.');
   }
 
-  console.log('✅ OpenRouter API response received');
+  console.log('✅ Google AI API response received');
 
-  if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+  if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
     console.error('❌ Invalid API response structure:', data);
     throw new Error('Unexpected response format. Please try again.');
   }
 
-  return data.choices[0].message.content;
+  const textContent = data.candidates[0].content.parts
+    .filter(part => part.text)
+    .map(part => part.text)
+    .join('');
+
+  return textContent;
 }
 
 async function generateActionPlan(analysisData, imageBase64) {
@@ -253,7 +252,7 @@ Return ONLY valid JSON (no markdown):
 
 Make it feel personal and specific to THIS person's skin, not a template. Reference the areas you analyzed.`;
 
-    const responseText = await callOpenRouter(prompt, imageBase64, SKIN_ANALYSIS_MODEL);
+    const responseText = await callGoogleAI(prompt, imageBase64, SKIN_ANALYSIS_MODEL);
     const cleanedText = stripMarkdown(responseText);
     return JSON.parse(cleanedText);
   } catch (error) {
@@ -289,14 +288,14 @@ export async function analyzeSkin(imageBase64) {
   try {
     console.log('🔍 API: Starting skin analysis');
     console.log('📊 Using model:', SKIN_ANALYSIS_MODEL);
-    console.log('🔑 OpenRouter endpoint:', OPENROUTER_API_URL);
-    console.log('API Key available:', OPENROUTER_API_KEY ? 'YES' : 'NO');
-    console.log('API Key length:', OPENROUTER_API_KEY?.length || 0);
+    console.log('🔑 Google AI endpoint:', GOOGLE_AI_API_URL);
+    console.log('API Key available:', GOOGLE_AI_KEY ? 'YES' : 'NO');
+    console.log('API Key length:', GOOGLE_AI_KEY?.length || 0);
     console.log('Image data length:', imageBase64?.length || 0);
 
     // Validate API key
-    if (!OPENROUTER_API_KEY || OPENROUTER_API_KEY === 'your_openrouter_api_key_here') {
-      console.error('❌ OpenRouter API key is missing or invalid');
+    if (!GOOGLE_AI_KEY || GOOGLE_AI_KEY === 'your_google_ai_key_here') {
+      console.error('❌ Google AI API key is missing or invalid');
       throw new Error("Becky couldn't analyse your skin right now. Please contact support.");
     }
 
@@ -404,7 +403,7 @@ CRITICAL RULES:
 - Action plan steps common examples: "Seek Professional Consultation", "Gentle Skincare Routine", "Targeted Treatment", "Sun Protection", "Hands Off / Don't Pick", "Hydration Focus", "Barrier Repair"
 - Keep the same calm, non-diagnostic Google AI Studio tone for action plan content`;
 
-    const responseText = await callOpenRouter(prompt, imageBase64, SKIN_ANALYSIS_MODEL);
+    const responseText = await callGoogleAI(prompt, imageBase64, SKIN_ANALYSIS_MODEL);
     const cleanedText = stripMarkdown(responseText);
     const data = JSON.parse(cleanedText);
 
@@ -446,13 +445,13 @@ export async function analyzeProducts(imageBase64) {
   try {
     console.log('🔍 Starting product analysis...');
     console.log('📊 Using model:', PRODUCT_ANALYSIS_MODEL);
-    console.log('🔑 OpenRouter endpoint:', OPENROUTER_API_URL);
-    console.log('API Key available:', OPENROUTER_API_KEY ? 'YES' : 'NO');
+    console.log('🔑 Google AI endpoint:', GOOGLE_AI_API_URL);
+    console.log('API Key available:', GOOGLE_AI_KEY ? 'YES' : 'NO');
     console.log('📸 Image data length:', imageBase64?.length || 0);
     console.log('📸 Image starts with:', imageBase64.substring(0, 50));
 
-    if (!OPENROUTER_API_KEY || OPENROUTER_API_KEY === 'your_openrouter_api_key_here') {
-      throw new Error('OpenRouter API key is missing');
+    if (!GOOGLE_AI_KEY || GOOGLE_AI_KEY === 'your_google_ai_key_here') {
+      throw new Error('Google AI API key is missing');
     }
 
     if (!imageBase64) {
@@ -514,7 +513,7 @@ export async function analyzeProducts(imageBase64) {
 
 Identify all visible products. Keep descriptions brief - one sentence each. Return complete valid JSON only.`;
 
-    const responseText = await callOpenRouter(prompt, imageBase64, PRODUCT_ANALYSIS_MODEL);
+    const responseText = await callGoogleAI(prompt, imageBase64, PRODUCT_ANALYSIS_MODEL);
 
     if (!responseText) {
       throw new Error("API returned empty response");

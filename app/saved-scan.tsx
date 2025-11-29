@@ -67,7 +67,7 @@ export default function SavedScan() {
     );
   }
 
-  const { skinAnalysis } = scanData;
+  // scanData already contains the analysis data directly
 
   const getSeverityColor = (severity: string) => {
     switch (severity?.toLowerCase()) {
@@ -121,13 +121,13 @@ export default function SavedScan() {
         <View style={styles.pillsRow}>
           <View style={styles.pillContainer}>
             <Text style={styles.pillLabel}>SKIN TYPE</Text>
-            <Text style={styles.pillValue}>{skinAnalysis.skin_type || 'Unknown'}</Text>
+            <Text style={styles.pillValue}>{scanData.skin_type || 'Unknown'}</Text>
           </View>
 
-          {skinAnalysis.key_concerns && skinAnalysis.key_concerns.length > 0 && (
+          {scanData.key_concerns && scanData.key_concerns.length > 0 && (
             <View style={styles.concernsPillContainer}>
               <Text style={styles.pillLabel}>CONCERNS</Text>
-              {skinAnalysis.key_concerns.slice(0, 3).map((concern: any, idx: number) => (
+              {scanData.key_concerns.slice(0, 3).map((concern: any, idx: number) => (
                 <Text key={idx} style={styles.concernPill}>{concern.name}</Text>
               ))}
             </View>
@@ -140,14 +140,14 @@ export default function SavedScan() {
             <CheckCircle color="#10B981" size={20} strokeWidth={2} />
             <Text style={styles.sectionTitle}>Assessment</Text>
           </View>
-          <Text style={styles.assessmentText}>{skinAnalysis.overall_assessment}</Text>
+          <Text style={styles.assessmentText}>{scanData.overall_assessment}</Text>
         </View>
 
         {/* Concerns Detected */}
-        {skinAnalysis.key_concerns && skinAnalysis.key_concerns.length > 0 && (
+        {scanData.key_concerns && scanData.key_concerns.length > 0 && (
           <View style={styles.sectionCard}>
             <Text style={styles.sectionTitle}>Concerns Detected</Text>
-            {skinAnalysis.key_concerns.map((concern: any, index: number) => (
+            {scanData.key_concerns.map((concern: any, index: number) => (
               <View key={index} style={styles.concernCard}>
                 <View style={styles.concernHeader}>
                   <Text style={styles.concernName}>{concern.name}</Text>
@@ -168,13 +168,13 @@ export default function SavedScan() {
         )}
 
         {/* Ingredients to Avoid */}
-        {skinAnalysis.ingredients_to_avoid && skinAnalysis.ingredients_to_avoid.length > 0 && (
+        {scanData.ingredients_to_avoid && scanData.ingredients_to_avoid.length > 0 && (
           <View style={styles.warningCard}>
             <View style={styles.sectionHeader}>
               <AlertTriangle color="#EF4444" size={20} strokeWidth={2} />
               <Text style={[styles.sectionTitle, { color: '#991B1B' }]}>Ingredients to Avoid</Text>
             </View>
-            {skinAnalysis.ingredients_to_avoid.map((ingredient: any, index: number) => (
+            {scanData.ingredients_to_avoid.map((ingredient: any, index: number) => (
               <View key={index} style={styles.warningItem}>
                 <Text style={styles.warningIngredient}>{ingredient.name}</Text>
                 <Text style={styles.warningReason}>{ingredient.reason}</Text>
@@ -184,11 +184,11 @@ export default function SavedScan() {
         )}
 
         {/* Ingredients That Can Help */}
-        {skinAnalysis.ingredients_that_help && skinAnalysis.ingredients_that_help.length > 0 && (
+        {scanData.ingredients_that_help && scanData.ingredients_that_help.length > 0 && (
           <View style={styles.sectionCard}>
             <Text style={styles.sectionTitle}>Ingredients That Can Help</Text>
             <View style={styles.ingredientsGrid}>
-              {skinAnalysis.ingredients_that_help.map((ingredient: any, index: number) => (
+              {scanData.ingredients_that_help.map((ingredient: any, index: number) => (
                 <View key={index} style={styles.ingredientCard}>
                   <Text style={styles.ingredientName}>{ingredient.name}</Text>
                   <Text style={styles.ingredientUse}>{ingredient.use_for}</Text>
@@ -202,10 +202,10 @@ export default function SavedScan() {
         )}
 
         {/* General Tips */}
-        {skinAnalysis.general_recommendations && skinAnalysis.general_recommendations.length > 0 && (
+        {scanData.general_recommendations && scanData.general_recommendations.length > 0 && (
           <View style={styles.sectionCard}>
             <Text style={styles.sectionTitle}>General Tips</Text>
-            {skinAnalysis.general_recommendations.map((tip: string, index: number) => (
+            {scanData.general_recommendations.map((tip: string, index: number) => (
               <View key={index} style={styles.tipItem}>
                 <CheckCircle color="#10B981" size={18} strokeWidth={2} />
                 <Text style={styles.tipText}>{tip}</Text>
@@ -215,10 +215,10 @@ export default function SavedScan() {
         )}
 
         {/* Dermatology Advice */}
-        {skinAnalysis.dermatology_advice && (
+        {scanData.dermatology_advice && (
           <View style={styles.dermCard}>
             <Text style={styles.dermTitle}>When to See a Dermatologist</Text>
-            <Text style={styles.dermText}>{skinAnalysis.dermatology_advice}</Text>
+            <Text style={styles.dermText}>{scanData.dermatology_advice}</Text>
           </View>
         )}
 
@@ -241,7 +241,7 @@ export default function SavedScan() {
             pathname: '/action-plan',
             params: {
               analysisData: JSON.stringify({
-                ...skinAnalysis,
+                ...scanData,
                 action_plan_steps: scanData.actionPlan?.action_plan_steps || [],
                 quick_tips: scanData.actionPlan?.quick_tips || [],
                 photoUri: scanData.photoUri,

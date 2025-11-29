@@ -43,7 +43,8 @@ export default function Auth() {
     if (error) {
       setError(error.message);
     } else {
-      router.replace('/home');
+      // Go to index - it will check hasCompletedOnboarding and route accordingly
+      router.replace('/');
     }
   };
 

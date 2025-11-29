@@ -33,7 +33,7 @@ export default function RootLayout() {
   return (
     <AuthProvider>
       <OnboardingProvider>
-        <Stack screenOptions={{ headerShown: false }}>
+        <Stack screenOptions={{ headerShown: false }} initialRouteName="index">
           <Stack.Screen name="index" />
           <Stack.Screen name="auth" />
           <Stack.Screen name="onboarding/intro1" />

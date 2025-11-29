@@ -39,6 +39,16 @@ export default function FinalOnboarding() {
       await storage.saveSkinAnalysis(dataToSave);
       console.log('💾 Results saved to storage');
 
+      // Save to scan history
+      const scanToSave = {
+        ...dataToSave,
+        unique_id: Date.now().toString(),
+        display_title: 'Skin Analysis',
+        created_at: new Date().toISOString(),
+      };
+      await storage.saveScan(scanToSave);
+      console.log('💾 Scan added to history');
+
       // Mark onboarding as complete if user is logged in
       if (user) {
         try {

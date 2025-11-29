@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { ArrowLeft, AlertCircle, AlertTriangle, CheckCircle } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import storage from '../src/utils/storage';
 
 export default function SkinResults() {
   const router = useRouter();
+  const params = useLocalSearchParams();
   const [results, setResults] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -17,7 +18,15 @@ export default function SkinResults() {
   const loadResults = async () => {
     try {
       console.log('📊 Loading skin analysis results...');
-      const data = await storage.getSkinAnalysis();
+      let data;
+
+      if (params.scanId) {
+        const scans = await storage.getSavedScans();
+        data = scans.find((s: any) => s.unique_id === params.scanId);
+      } else {
+        data = await storage.getSkinAnalysis();
+      }
+
       console.log('✅ Loaded data:', data ? 'Found' : 'Not found');
 
       if (data) {
@@ -110,12 +119,21 @@ export default function SkinResults() {
       >
         {/* Header */}
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => router.push('/home')} style={styles.backButton}>
+          <TouchableOpacity onPress={() => params.scanId ? router.back() : router.push('/home')} style={styles.backButton}>
             <ArrowLeft color="#2C2C2C" size={24} strokeWidth={2} />
           </TouchableOpacity>
           <View style={styles.headerText}>
-            <Text style={styles.title}>Skin Analysis</Text>
-            <Text style={styles.timestamp}>Here is what we found based on your photo.</Text>
+            <Text style={styles.title}>{results.display_title || 'Skin Analysis'}</Text>
+            <Text style={styles.timestamp}>
+              {results.created_at
+                ? new Date(results.created_at).toLocaleDateString('en-US', {
+                  weekday: 'long',
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })
+                : 'Here is what we found based on your photo.'}
+            </Text>
           </View>
         </View>
 
@@ -153,6 +171,14 @@ export default function SkinResults() {
           </View>
           <Text style={styles.assessmentText}>{results.overall_assessment}</Text>
         </View>
+
+        {/* Skin Type Card */}
+        {results.skin_type && (
+          <View style={styles.sectionCard}>
+            <Text style={styles.sectionTitle}>Skin Type</Text>
+            <Text style={styles.assessmentText}>{results.skin_type}</Text>
+          </View>
+        )}
 
         {/* Concerns Detected */}
         {results.key_concerns && results.key_concerns.length > 0 && (

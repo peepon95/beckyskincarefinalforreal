@@ -52,7 +52,10 @@ export default function Welcome() {
       <View style={styles.footer}>
         <TouchableOpacity
           style={styles.button}
-          onPress={() => router.push('/auth')}
+          onPress={() => {
+            console.log('Get Started button clicked');
+            router.push('/auth');
+          }}
         >
           <LinearGradient
             colors={['#8B5CF6', '#EC4899']}
@@ -60,13 +63,16 @@ export default function Welcome() {
             end={{ x: 1, y: 0 }}
             style={styles.buttonGradient}
           >
-            <Text style={styles.buttonText}>Get Started</Text>
+            <Text style={styles.buttonText}>Start Your Skin Journey</Text>
           </LinearGradient>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.skipButton}
-          onPress={() => router.push('/onboarding/intro2')}
+          onPress={() => {
+            console.log('Continue as guest clicked');
+            router.push('/onboarding/intro2');
+          }}
         >
           <Text style={styles.skipText}>Continue as guest</Text>
         </TouchableOpacity>
