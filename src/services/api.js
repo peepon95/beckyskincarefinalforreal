@@ -76,6 +76,10 @@ async function callOpenRouter(prompt, imageBase64, model) {
 
   let response;
   try {
+    // Create abort controller for timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+
     response = await fetch(OPENROUTER_API_URL, {
       method: 'POST',
       headers: {
@@ -89,10 +93,16 @@ async function callOpenRouter(prompt, imageBase64, model) {
         messages: messages,
         temperature: 0.7,
         max_tokens: 8000
-      })
+      }),
+      signal: controller.signal
     });
+
+    clearTimeout(timeoutId);
   } catch (networkError) {
     console.error('❌ Network error:', networkError);
+    if (networkError.name === 'AbortError') {
+      throw new Error('Request timed out. Please check your connection and try again.');
+    }
     throw new Error('Network connection failed. Please check your internet connection and try again.');
   }
 
