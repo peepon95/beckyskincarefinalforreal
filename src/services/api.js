@@ -1,22 +1,30 @@
 // Get API key from environment - try multiple sources for compatibility
 const GOOGLE_AI_KEY =
   process.env.EXPO_PUBLIC_GOOGLE_AI_KEY ||
-  (typeof window !== 'undefined' && window._env_?.EXPO_PUBLIC_GOOGLE_AI_KEY);
+  (typeof window !== 'undefined' && window._env_?.EXPO_PUBLIC_GOOGLE_AI_KEY) ||
+  (typeof window !== 'undefined' && window.ENV?.EXPO_PUBLIC_GOOGLE_AI_KEY);
 
 const GOOGLE_AI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models';
 const SKIN_ANALYSIS_MODEL = 'gemini-2.5-flash';
 const PRODUCT_ANALYSIS_MODEL = 'gemini-2.5-flash';
 
-// Log API key status on module load
-console.log('🔑 Google AI Key Check:');
-console.log('  - Available:', GOOGLE_AI_KEY ? 'YES' : 'NO');
-console.log('  - Length:', GOOGLE_AI_KEY?.length || 0);
+// Enhanced logging for debugging environment issues (especially in Bolt)
+console.log('🔑 ===== GOOGLE AI KEY DEBUG =====');
+console.log('  - process.env.EXPO_PUBLIC_GOOGLE_AI_KEY:', process.env.EXPO_PUBLIC_GOOGLE_AI_KEY ? 'EXISTS' : 'MISSING');
+console.log('  - window._env_:', typeof window !== 'undefined' && window._env_ ? 'EXISTS' : 'MISSING');
+console.log('  - window.ENV:', typeof window !== 'undefined' && window.ENV ? 'EXISTS' : 'MISSING');
+console.log('  - Final GOOGLE_AI_KEY:', GOOGLE_AI_KEY ? 'LOADED' : 'NOT LOADED');
+console.log('  - Key Length:', GOOGLE_AI_KEY?.length || 0);
 console.log('  - Starts with AIza:', GOOGLE_AI_KEY?.startsWith('AIza') ? 'YES' : 'NO');
-console.log('  - process.env keys:', Object.keys(process.env).filter(k => k.includes('GOOGLE')));
+console.log('  - First 10 chars:', GOOGLE_AI_KEY?.substring(0, 10) || 'N/A');
+console.log('  - All env keys with GOOGLE:', Object.keys(process.env).filter(k => k.includes('GOOGLE')));
+console.log('  - All env keys with EXPO:', Object.keys(process.env).filter(k => k.includes('EXPO')));
+console.log('================================');
 
 if (!GOOGLE_AI_KEY || GOOGLE_AI_KEY === 'your_google_ai_key_here') {
   console.error('❌ Google AI API key is missing or invalid!');
   console.error('❌ Set EXPO_PUBLIC_GOOGLE_AI_KEY in your .env file');
+  console.error('❌ For Bolt: Add EXPO_PUBLIC_GOOGLE_AI_KEY in environment settings');
   console.error('❌ Get your key at: https://aistudio.google.com/app/apikey');
 }
 
