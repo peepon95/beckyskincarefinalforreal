@@ -13,6 +13,7 @@ interface AuthContextType {
   signInWithGoogle: () => Promise<{ error: any }>;
   signInWithApple: () => Promise<{ error: any }>;
   signOut: () => Promise<void>;
+  completeOnboarding: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -25,6 +26,7 @@ const AuthContext = createContext<AuthContextType>({
   signInWithGoogle: async () => ({ error: null }),
   signInWithApple: async () => ({ error: null }),
   signOut: async () => { },
+  completeOnboarding: async () => { },
 });
 
 export const useAuth = () => {
@@ -132,6 +134,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setUser(null);
   };
 
+  const completeOnboarding = async () => {
+    if (!user) {
+      console.log('No user logged in, skipping onboarding completion');
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ has_completed_onboarding: true })
+        .eq('id', user.id);
+
+      if (error) {
+        console.error('Error updating onboarding status:', error);
+      } else {
+        setHasCompletedOnboarding(true);
+        console.log('Onboarding marked as complete');
+      }
+    } catch (error) {
+      console.error('Error completing onboarding:', error);
+    }
+  };
+
   const value = {
     user,
     session,
@@ -142,6 +167,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     signInWithGoogle,
     signInWithApple,
     signOut,
+    completeOnboarding,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -9,10 +9,12 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { analyzeSkin } from '@/src/services/api';
 import storage from '@/src/utils/storage';
 import SkinAnalysisLoader from '@/components/SkinAnalysisLoader';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function PhotoScreen() {
   const router = useRouter();
   const { updateData, data } = useOnboarding();
+  const { completeOnboarding } = useAuth();
   const [showSecondLine, setShowSecondLine] = useState(false);
   const [photoUri, setPhotoUri] = useState<string>('');
   const [photoBase64, setPhotoBase64] = useState<string>('');
@@ -140,7 +142,10 @@ export default function PhotoScreen() {
       };
 
       await storage.saveSkinAnalysis(dataToSave);
-      console.log('💾 Results saved to storage');
+      console.log('✅ Skin analysis saved successfully');
+
+      // Mark onboarding as complete for logged-in users
+      await completeOnboarding();
 
       // Save to scan history
       const scanToSave = {
@@ -200,124 +205,130 @@ export default function PhotoScreen() {
   };
 
   return (
-    <LinearGradient
-      colors={['#FFF0F5', '#F8E8FF', '#E6F3FF']}
-      style={styles.container}
-    >
-      <SkinAnalysisLoader
-        visible={isAnalyzing}
-        onComplete={() => { }} // Handled in handleStartAnalysis
-        minimumDuration={2000}
-      />
-
-      {/* Back Button */}
-      <TouchableOpacity
-        style={styles.backButton}
-        onPress={() => router.back()}
-        activeOpacity={0.7}
+    <View style={styles.wrapper}>
+      <LinearGradient
+        colors={['#FFF0F5', '#F8E8FF', '#E6F3FF']}
+        style={styles.container}
       >
-        <ArrowLeft color="#2C2C2C" size={24} strokeWidth={2} />
-      </TouchableOpacity>
+        <SkinAnalysisLoader
+          visible={isAnalyzing}
+          onComplete={() => { }} // Handled in handleStartAnalysis
+          minimumDuration={2000}
+        />
 
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.content}
-        showsVerticalScrollIndicator={false}
-      >
-        <View style={styles.titleSection}>
-          <Typewriter
-            text="Now let's take a closer look at your skin."
-            speed={50}
-            style={styles.title}
-            onComplete={() => {
-              setTimeout(() => setShowSecondLine(true), 500);
-            }}
-          />
-          {showSecondLine && (
-            <Text style={styles.subtitle}>
-              Please take a clear photo of the area you'd like Becky to focus on – for example your cheeks, forehead, chin, or around the mouth.
-            </Text>
-          )}
-        </View>
+        {/* Back Button */}
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => router.back()}
+          activeOpacity={0.7}
+        >
+          <ArrowLeft color="#2C2C2C" size={24} strokeWidth={2} />
+        </TouchableOpacity>
 
-        {showSecondLine && (
-          <>
-            <View style={styles.guidelinesList}>
-              <Text style={styles.guidelineItem}>• Remove heavy make-up if you can.</Text>
-              <Text style={styles.guidelineItem}>• Stand near natural light.</Text>
-              <Text style={styles.guidelineItem}>• Fill the frame with the area you care about.</Text>
-              <Text style={styles.guidelineItem}>• Avoid filters or beauty modes.</Text>
-            </View>
-
-            {photoUri ? (
-              <View style={styles.photoPreviewContainer}>
-                <Image source={{ uri: photoUri }} style={styles.photoPreview} />
-                <TouchableOpacity style={styles.removeButton} onPress={handleRetake}>
-                  <X color="#FFFFFF" size={20} />
-                </TouchableOpacity>
-              </View>
-            ) : (
-              <View
-                {...({
-                  style: [styles.actionsContainer, isDragging && styles.draggingContainer],
-                  onDragOver: handleDragOver,
-                  onDragLeave: handleDragLeave,
-                  onDrop: handleDrop,
-                } as any)}
-              >
-                {isDragging && (
-                  <View style={styles.dropZoneOverlay}>
-                    <Upload color="#8B5CF6" size={48} />
-                    <Text style={styles.dropZoneText}>Drop your image here</Text>
-                  </View>
-                )}
-                <TouchableOpacity style={styles.primaryAction} onPress={handleOpenCamera}>
-                  <LinearGradient
-                    colors={['#8B5CF6', '#EC4899']}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 0 }}
-                    style={styles.actionGradient}
-                  >
-                    <Camera color="#FFFFFF" size={24} />
-                    <Text style={styles.primaryActionText}>Open Camera</Text>
-                  </LinearGradient>
-                </TouchableOpacity>
-
-                <TouchableOpacity style={styles.secondaryAction} onPress={handleUploadPhoto}>
-                  <Upload color="#4A4A5E" size={20} />
-                  <Text style={styles.secondaryActionText}>Upload a photo instead</Text>
-                </TouchableOpacity>
-              </View>
-            )}
-          </>
-        )}
-      </ScrollView>
-
-      {photoUri && (
-        <View style={styles.footer}>
-          <TouchableOpacity
-            style={styles.nextButton}
-            onPress={handleStartAnalysis}
-            disabled={isAnalyzing}
-          >
-            <LinearGradient
-              colors={['#8B5CF6', '#EC4899']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              style={styles.buttonGradient}
-            >
-              <Text style={styles.nextButtonText}>
-                {isAnalyzing ? 'Analyzing...' : 'Start Skin Analysis'}
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.content}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.titleSection}>
+            <Typewriter
+              text="Now let's take a closer look at your skin."
+              speed={50}
+              style={styles.title}
+              onComplete={() => {
+                setTimeout(() => setShowSecondLine(true), 500);
+              }}
+            />
+            {showSecondLine && (
+              <Text style={styles.subtitle}>
+                Please take a clear photo of the area you'd like Becky to focus on – for example your cheeks, forehead, chin, or around the mouth.
               </Text>
-            </LinearGradient>
-          </TouchableOpacity>
-        </View>
-      )}
-    </LinearGradient>
+            )}
+          </View>
+
+          {showSecondLine && (
+            <>
+              <View style={styles.guidelinesList}>
+                <Text style={styles.guidelineItem}>• Remove heavy make-up if you can.</Text>
+                <Text style={styles.guidelineItem}>• Stand near natural light.</Text>
+                <Text style={styles.guidelineItem}>• Fill the frame with the area you care about.</Text>
+                <Text style={styles.guidelineItem}>• Avoid filters or beauty modes.</Text>
+              </View>
+
+              {photoUri ? (
+                <View style={styles.photoPreviewContainer}>
+                  <Image source={{ uri: photoUri }} style={styles.photoPreview} />
+                  <TouchableOpacity style={styles.removeButton} onPress={handleRetake}>
+                    <X color="#FFFFFF" size={20} />
+                  </TouchableOpacity>
+                </View>
+              ) : (
+                <View
+                  {...({
+                    style: [styles.actionsContainer, isDragging && styles.draggingContainer],
+                    onDragOver: handleDragOver,
+                    onDragLeave: handleDragLeave,
+                    onDrop: handleDrop,
+                  } as any)}
+                >
+                  {isDragging && (
+                    <View style={styles.dropZoneOverlay}>
+                      <Upload color="#8B5CF6" size={48} />
+                      <Text style={styles.dropZoneText}>Drop your image here</Text>
+                    </View>
+                  )}
+                  <TouchableOpacity style={styles.primaryAction} onPress={handleOpenCamera}>
+                    <LinearGradient
+                      colors={['#8B5CF6', '#EC4899']}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 0 }}
+                      style={styles.actionGradient}
+                    >
+                      <Camera color="#FFFFFF" size={24} />
+                      <Text style={styles.primaryActionText}>Open Camera</Text>
+                    </LinearGradient>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity style={styles.secondaryAction} onPress={handleUploadPhoto}>
+                    <Upload color="#4A4A5E" size={20} />
+                    <Text style={styles.secondaryActionText}>Upload a photo instead</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+            </>
+          )}
+        </ScrollView>
+
+        {photoUri && (
+          <View style={styles.footer}>
+            <TouchableOpacity
+              style={styles.nextButton}
+              onPress={handleStartAnalysis}
+              disabled={isAnalyzing}
+            >
+              <LinearGradient
+                colors={['#8B5CF6', '#EC4899']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={styles.buttonGradient}
+              >
+                <Text style={styles.nextButtonText}>
+                  {isAnalyzing ? 'Analyzing...' : 'Start Skin Analysis'}
+                </Text>
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
+        )}
+      </LinearGradient>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  wrapper: {
+    flex: 1,
+    backgroundColor: '#F5F5F7',
+  },
   container: {
     flex: 1,
     maxWidth: 500,

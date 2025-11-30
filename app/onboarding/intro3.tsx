@@ -7,40 +7,49 @@ export default function Intro3() {
   const router = useRouter();
 
   return (
-    <LinearGradient
-      colors={['#FFF0F5', '#F8E8FF', '#E6F3FF']}
-      style={styles.container}
-    >
-      <View style={styles.content}>
-        <Typewriter
-          text="We'll ask a few quick questions and then take a closer look at your skin together."
-          speed={50}
-          style={styles.text}
-        />
-      </View>
+    <View style={styles.wrapper}>
+      <LinearGradient
+        colors={['#FFF0F5', '#F8E8FF', '#E6F3FF']}
+        style={styles.container}
+      >
+        <View style={styles.content}>
+          <Typewriter
+            text="We'll ask a few quick questions and then take a closer look at your skin together."
+            speed={50}
+            style={styles.text}
+          />
+        </View>
 
-      <View style={styles.footer}>
-        <TouchableOpacity
-          style={styles.primaryButton}
-          onPress={() => router.push('/onboarding/name')}
-        >
-          <LinearGradient
-            colors={['#8B5CF6', '#EC4899']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            style={styles.buttonGradient}
+        <View style={styles.footer}>
+          <TouchableOpacity
+            style={styles.primaryButton}
+            onPress={() => router.push('/onboarding/name')}
           >
-            <Text style={styles.primaryButtonText}>Continue</Text>
-          </LinearGradient>
-        </TouchableOpacity>
-      </View>
-    </LinearGradient>
+            <LinearGradient
+              colors={['#8B5CF6', '#EC4899']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={styles.buttonGradient}
+            >
+              <Text style={styles.primaryButtonText}>Continue</Text>
+            </LinearGradient>
+          </TouchableOpacity>
+        </View>
+      </LinearGradient>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  wrapper: {
+    flex: 1,
+    backgroundColor: '#F5F5F7',
+  },
   container: {
     flex: 1,
+    maxWidth: 500,
+    width: '100%',
+    alignSelf: 'center',
   },
   content: {
     flex: 1,

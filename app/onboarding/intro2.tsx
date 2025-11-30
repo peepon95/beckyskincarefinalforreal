@@ -9,54 +9,63 @@ export default function Intro2() {
   const [showSecondLine, setShowSecondLine] = useState(false);
 
   return (
-    <LinearGradient
-      colors={['#FFF0F5', '#F8E8FF', '#E6F3FF']}
-      style={styles.container}
-    >
-      <View style={styles.content}>
-        <View>
-          <Typewriter
-            text="No more guessing or scrolling through conflicting advice."
-            speed={50}
-            style={styles.text}
-            onComplete={() => {
-              setTimeout(() => setShowSecondLine(true), 500);
-            }}
-          />
-          {showSecondLine && (
-            <View style={styles.secondLine}>
-              <Typewriter
-                text="Becky looks at your skin and explains what it actually needs."
-                speed={50}
-                style={styles.text}
-              />
-            </View>
-          )}
+    <View style={styles.wrapper}>
+      <LinearGradient
+        colors={['#FFF0F5', '#F8E8FF', '#E6F3FF']}
+        style={styles.container}
+      >
+        <View style={styles.content}>
+          <View>
+            <Typewriter
+              text="No more guessing or scrolling through conflicting advice."
+              speed={50}
+              style={styles.text}
+              onComplete={() => {
+                setTimeout(() => setShowSecondLine(true), 500);
+              }}
+            />
+            {showSecondLine && (
+              <View style={styles.secondLine}>
+                <Typewriter
+                  text="Becky looks at your skin and explains what it actually needs."
+                  speed={50}
+                  style={styles.text}
+                />
+              </View>
+            )}
+          </View>
         </View>
-      </View>
 
-      <View style={styles.footer}>
-        <TouchableOpacity
-          style={styles.primaryButton}
-          onPress={() => router.push('/onboarding/intro3')}
-        >
-          <LinearGradient
-            colors={['#8B5CF6', '#EC4899']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            style={styles.buttonGradient}
+        <View style={styles.footer}>
+          <TouchableOpacity
+            style={styles.primaryButton}
+            onPress={() => router.push('/onboarding/intro3')}
           >
-            <Text style={styles.primaryButtonText}>Continue</Text>
-          </LinearGradient>
-        </TouchableOpacity>
-      </View>
-    </LinearGradient>
+            <LinearGradient
+              colors={['#8B5CF6', '#EC4899']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={styles.buttonGradient}
+            >
+              <Text style={styles.primaryButtonText}>Continue</Text>
+            </LinearGradient>
+          </TouchableOpacity>
+        </View>
+      </LinearGradient>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  wrapper: {
+    flex: 1,
+    backgroundColor: '#F5F5F7',
+  },
   container: {
     flex: 1,
+    maxWidth: 500,
+    width: '100%',
+    alignSelf: 'center',
   },
   content: {
     flex: 1,

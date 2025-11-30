@@ -181,232 +181,241 @@ export default function Profile() {
   const avgHealthScore = getAverageHealthScore();
 
   return (
-    <LinearGradient
-      colors={['#F8E8FF', '#FFF0F5', '#F3E8FF']}
-      style={styles.container}
-    >
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
+    <View style={styles.wrapper}>
+      <LinearGradient
+        colors={['#F8E8FF', '#FFF0F5', '#F3E8FF']}
+        style={styles.container}
       >
-        {/* Profile Header Card */}
-        <View style={styles.profileHeaderCard}>
-          <View style={styles.profileHeaderContent}>
-            <View style={styles.avatarContainer}>
-              <User color="#8B5CF6" size={32} strokeWidth={2} />
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          {/* Profile Header Card */}
+          <View style={styles.profileHeaderCard}>
+            <View style={styles.profileHeaderContent}>
+              <View style={styles.avatarContainer}>
+                <User color="#8B5CF6" size={32} strokeWidth={2} />
+              </View>
+              <View style={styles.profileHeaderText}>
+                <Text style={styles.profileName}>
+                  {user?.email?.split('@')[0] || 'Guest'}
+                </Text>
+                <Text style={styles.profileSubtext}>
+                  {user ? `${user.email}` : 'Becky member since 2025'}
+                </Text>
+              </View>
             </View>
-            <View style={styles.profileHeaderText}>
-              <Text style={styles.profileName}>
-                {user?.email?.split('@')[0] || 'Guest'}
-              </Text>
-              <Text style={styles.profileSubtext}>
-                {user ? `${user.email}` : 'Becky member since 2025'}
-              </Text>
+            <TouchableOpacity style={styles.editButton}>
+              <Text style={styles.editButtonText}>Edit Profile</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Skin Overview Section */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Your Skin at a Glance</Text>
+
+            <View style={styles.overviewGrid}>
+              {/* Skin Type Card */}
+              <View style={styles.overviewCard}>
+                <View style={styles.overviewIconCircle}>
+                  <Droplet color="#8B5CF6" size={20} strokeWidth={2} />
+                </View>
+                <Text style={styles.overviewLabel}>Skin Type</Text>
+                <Text style={styles.overviewValue}>
+                  {skinType || 'Not set yet'}
+                </Text>
+              </View>
+
+              {/* Common Concerns Card */}
+              <View style={styles.overviewCard}>
+                <View style={styles.overviewIconCircle}>
+                  <AlertCircle color="#EC4899" size={20} strokeWidth={2} />
+                </View>
+                <Text style={styles.overviewLabel}>Common Concerns</Text>
+                {commonConcerns.length > 0 ? (
+                  <Text style={styles.overviewValue} numberOfLines={2}>
+                    {commonConcerns.slice(0, 2).join(', ')}
+                  </Text>
+                ) : (
+                  <Text style={styles.overviewValueEmpty}>Not set yet</Text>
+                )}
+              </View>
+
+              {/* Sensitivities Card */}
+              <View style={styles.overviewCard}>
+                <View style={styles.overviewIconCircle}>
+                  <Activity color="#F59E0B" size={20} strokeWidth={2} />
+                </View>
+                <Text style={styles.overviewLabel}>Known Sensitivities</Text>
+                {sensitivities.length > 0 ? (
+                  <Text style={styles.overviewValue} numberOfLines={2}>
+                    {sensitivities.slice(0, 2).join(', ')}
+                  </Text>
+                ) : (
+                  <Text style={styles.overviewValueEmpty}>Not set yet</Text>
+                )}
+              </View>
             </View>
           </View>
-          <TouchableOpacity style={styles.editButton}>
-            <Text style={styles.editButtonText}>Edit Profile</Text>
-          </TouchableOpacity>
-        </View>
 
-        {/* Skin Overview Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Your Skin at a Glance</Text>
-
-          <View style={styles.overviewGrid}>
-            {/* Skin Type Card */}
-            <View style={styles.overviewCard}>
-              <View style={styles.overviewIconCircle}>
-                <Droplet color="#8B5CF6" size={20} strokeWidth={2} />
-              </View>
-              <Text style={styles.overviewLabel}>Skin Type</Text>
-              <Text style={styles.overviewValue}>
-                {skinType || 'Not set yet'}
-              </Text>
-            </View>
-
-            {/* Common Concerns Card */}
-            <View style={styles.overviewCard}>
-              <View style={styles.overviewIconCircle}>
-                <AlertCircle color="#EC4899" size={20} strokeWidth={2} />
-              </View>
-              <Text style={styles.overviewLabel}>Common Concerns</Text>
-              {commonConcerns.length > 0 ? (
-                <Text style={styles.overviewValue} numberOfLines={2}>
-                  {commonConcerns.slice(0, 2).join(', ')}
-                </Text>
-              ) : (
-                <Text style={styles.overviewValueEmpty}>Not set yet</Text>
-              )}
-            </View>
-
-            {/* Sensitivities Card */}
-            <View style={styles.overviewCard}>
-              <View style={styles.overviewIconCircle}>
-                <Activity color="#F59E0B" size={20} strokeWidth={2} />
-              </View>
-              <Text style={styles.overviewLabel}>Known Sensitivities</Text>
-              {sensitivities.length > 0 ? (
-                <Text style={styles.overviewValue} numberOfLines={2}>
-                  {sensitivities.slice(0, 2).join(', ')}
-                </Text>
-              ) : (
-                <Text style={styles.overviewValueEmpty}>Not set yet</Text>
-              )}
-            </View>
-          </View>
-        </View>
-
-        {/* Skin Progress Stats */}
-        {savedScans.length > 0 && (
-          <View style={styles.statsSection}>
-            <View style={styles.statPill}>
-              <View style={styles.statIconCircle}>
-                <Activity color="#8B5CF6" size={16} strokeWidth={2} />
-              </View>
-              <View style={styles.statContent}>
-                <Text style={styles.statValue}>{savedScans.length}</Text>
-                <Text style={styles.statLabel}>Total Scans</Text>
-              </View>
-            </View>
-
-            <View style={styles.statPill}>
-              <View style={styles.statIconCircle}>
-                <Calendar color="#8B5CF6" size={16} strokeWidth={2} />
-              </View>
-              <View style={styles.statContent}>
-                <Text style={styles.statValue}>
-                  {new Date(latestScan.created_at).toLocaleDateString('en-US', { day: 'numeric', month: 'short' })}
-                </Text>
-                <Text style={styles.statLabel}>Last Scan</Text>
-              </View>
-            </View>
-
-            {avgHealthScore && (
+          {/* Skin Progress Stats */}
+          {savedScans.length > 0 && (
+            <View style={styles.statsSection}>
               <View style={styles.statPill}>
                 <View style={styles.statIconCircle}>
-                  <TrendingUp color="#8B5CF6" size={16} strokeWidth={2} />
+                  <Activity color="#8B5CF6" size={16} strokeWidth={2} />
                 </View>
                 <View style={styles.statContent}>
-                  <Text style={styles.statValue}>{avgHealthScore}</Text>
-                  <Text style={styles.statLabel}>Avg Score</Text>
+                  <Text style={styles.statValue}>{savedScans.length}</Text>
+                  <Text style={styles.statLabel}>Total Scans</Text>
                 </View>
               </View>
-            )}
-          </View>
-        )}
 
-        {/* Skin History Shortcut */}
-        <TouchableOpacity
-          style={styles.historyCard}
-          onPress={() => router.push('/home')}
-          activeOpacity={0.7}
-        >
-          <View style={styles.historyContent}>
-            <View>
-              <Text style={styles.historyTitle}>Your Skin History</Text>
-              <Text style={styles.historyDescription}>
-                Review your past scans and action plans.
-              </Text>
+              <View style={styles.statPill}>
+                <View style={styles.statIconCircle}>
+                  <Calendar color="#8B5CF6" size={16} strokeWidth={2} />
+                </View>
+                <View style={styles.statContent}>
+                  <Text style={styles.statValue}>
+                    {new Date(latestScan.created_at).toLocaleDateString('en-US', { day: 'numeric', month: 'short' })}
+                  </Text>
+                  <Text style={styles.statLabel}>Last Scan</Text>
+                </View>
+              </View>
+
+              {avgHealthScore && (
+                <View style={styles.statPill}>
+                  <View style={styles.statIconCircle}>
+                    <TrendingUp color="#8B5CF6" size={16} strokeWidth={2} />
+                  </View>
+                  <View style={styles.statContent}>
+                    <Text style={styles.statValue}>{avgHealthScore}</Text>
+                    <Text style={styles.statLabel}>Avg Score</Text>
+                  </View>
+                </View>
+              )}
             </View>
-            <View style={styles.historyButton}>
-              <ArrowRight color="#8B5CF6" size={20} strokeWidth={2} />
+          )}
+
+          {/* Skin History Shortcut */}
+          <TouchableOpacity
+            style={styles.historyCard}
+            onPress={() => router.push('/home')}
+            activeOpacity={0.7}
+          >
+            <View style={styles.historyContent}>
+              <View>
+                <Text style={styles.historyTitle}>Your Skin History</Text>
+                <Text style={styles.historyDescription}>
+                  Review your past scans and action plans.
+                </Text>
+              </View>
+              <View style={styles.historyButton}>
+                <ArrowRight color="#8B5CF6" size={20} strokeWidth={2} />
+              </View>
+            </View>
+          </TouchableOpacity>
+
+          {/* Settings Section */}
+          <View style={styles.settingsSection}>
+            <Text style={styles.sectionTitle}>Settings</Text>
+
+            <View style={styles.settingsList}>
+              <TouchableOpacity style={styles.settingsItem}>
+                <View style={styles.settingsItemLeft}>
+                  <Bell color="#6B7280" size={20} strokeWidth={2} />
+                  <Text style={styles.settingsItemLabel}>Notifications</Text>
+                </View>
+                <ChevronRight color="#9CA3AF" size={20} strokeWidth={2} />
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.settingsItem}>
+                <View style={styles.settingsItemLeft}>
+                  <Lock color="#6B7280" size={20} strokeWidth={2} />
+                  <Text style={styles.settingsItemLabel}>Privacy & Data</Text>
+                </View>
+                <ChevronRight color="#9CA3AF" size={20} strokeWidth={2} />
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.settingsItem}>
+                <View style={styles.settingsItemLeft}>
+                  <HelpCircle color="#6B7280" size={20} strokeWidth={2} />
+                  <Text style={styles.settingsItemLabel}>Help & Support</Text>
+                </View>
+                <ChevronRight color="#9CA3AF" size={20} strokeWidth={2} />
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.settingsItem}
+                onPress={handleClearData}
+              >
+                <View style={styles.settingsItemLeft}>
+                  <Trash2 color="#6B7280" size={20} strokeWidth={2} />
+                  <Text style={styles.settingsItemLabel}>Clear Cached Data</Text>
+                </View>
+                <ChevronRight color="#9CA3AF" size={20} strokeWidth={2} />
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.settingsItem, styles.settingsItemLast]}
+                onPress={handleLogout}
+              >
+                <View style={styles.settingsItemLeft}>
+                  <LogOut color="#EF4444" size={20} strokeWidth={2} />
+                  <Text style={[styles.settingsItemLabel, styles.logoutText]}>Log Out</Text>
+                </View>
+                <ChevronRight color="#EF4444" size={20} strokeWidth={2} />
+              </TouchableOpacity>
             </View>
           </View>
-        </TouchableOpacity>
 
-        {/* Settings Section */}
-        <View style={styles.settingsSection}>
-          <Text style={styles.sectionTitle}>Settings</Text>
-
-          <View style={styles.settingsList}>
-            <TouchableOpacity style={styles.settingsItem}>
-              <View style={styles.settingsItemLeft}>
-                <Bell color="#6B7280" size={20} strokeWidth={2} />
-                <Text style={styles.settingsItemLabel}>Notifications</Text>
-              </View>
-              <ChevronRight color="#9CA3AF" size={20} strokeWidth={2} />
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.settingsItem}>
-              <View style={styles.settingsItemLeft}>
-                <Lock color="#6B7280" size={20} strokeWidth={2} />
-                <Text style={styles.settingsItemLabel}>Privacy & Data</Text>
-              </View>
-              <ChevronRight color="#9CA3AF" size={20} strokeWidth={2} />
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.settingsItem}>
-              <View style={styles.settingsItemLeft}>
-                <HelpCircle color="#6B7280" size={20} strokeWidth={2} />
-                <Text style={styles.settingsItemLabel}>Help & Support</Text>
-              </View>
-              <ChevronRight color="#9CA3AF" size={20} strokeWidth={2} />
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.settingsItem}
-              onPress={handleClearData}
-            >
-              <View style={styles.settingsItemLeft}>
-                <Trash2 color="#6B7280" size={20} strokeWidth={2} />
-                <Text style={styles.settingsItemLabel}>Clear Cached Data</Text>
-              </View>
-              <ChevronRight color="#9CA3AF" size={20} strokeWidth={2} />
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[styles.settingsItem, styles.settingsItemLast]}
-              onPress={handleLogout}
-            >
-              <View style={styles.settingsItemLeft}>
-                <LogOut color="#EF4444" size={20} strokeWidth={2} />
-                <Text style={[styles.settingsItemLabel, styles.logoutText]}>Log Out</Text>
-              </View>
-              <ChevronRight color="#EF4444" size={20} strokeWidth={2} />
-            </TouchableOpacity>
+          {/* Version Info */}
+          <View style={styles.versionInfo}>
+            <Text style={styles.versionText}>Version 1.0.0 · Made with 💜 by Becky</Text>
           </View>
+
+          <View style={{ height: 100 }} />
+        </ScrollView>
+
+        <Toast
+          visible={toast.visible}
+          message={toast.message}
+          type={toast.type}
+          onDismiss={() => setToast({ ...toast, visible: false })}
+        />
+
+        {/* Bottom Navigation */}
+        <View style={styles.bottomNav}>
+          <TouchableOpacity
+            style={styles.navTab}
+            onPress={() => router.push('/home')}
+            activeOpacity={0.7}
+          >
+            <HomeIcon color="#9CA3AF" size={24} strokeWidth={2} />
+            <Text style={styles.navLabel}>Home</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.navTab} activeOpacity={0.7}>
+            <User color="#8B5CF6" size={24} strokeWidth={2} />
+            <Text style={[styles.navLabel, styles.navLabelActive]}>Profile</Text>
+          </TouchableOpacity>
         </View>
-
-        {/* Version Info */}
-        <View style={styles.versionInfo}>
-          <Text style={styles.versionText}>Version 1.0.0 · Made with 💜 by Becky</Text>
-        </View>
-
-        <View style={{ height: 100 }} />
-      </ScrollView>
-
-      <Toast
-        visible={toast.visible}
-        message={toast.message}
-        type={toast.type}
-        onDismiss={() => setToast({ ...toast, visible: false })}
-      />
-
-      {/* Bottom Navigation */}
-      <View style={styles.bottomNav}>
-        <TouchableOpacity
-          style={styles.navTab}
-          onPress={() => router.push('/home')}
-          activeOpacity={0.7}
-        >
-          <HomeIcon color="#9CA3AF" size={24} strokeWidth={2} />
-          <Text style={styles.navLabel}>Home</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.navTab} activeOpacity={0.7}>
-          <User color="#8B5CF6" size={24} strokeWidth={2} />
-          <Text style={[styles.navLabel, styles.navLabelActive]}>Profile</Text>
-        </TouchableOpacity>
-      </View>
-    </LinearGradient>
+      </LinearGradient>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  wrapper: {
+    flex: 1,
+    backgroundColor: '#F5F5F7',
+  },
   container: {
     flex: 1,
+    maxWidth: 500,
+    width: '100%',
+    alignSelf: 'center',
   },
   scrollView: {
     flex: 1,

@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Typewriter } from '@/components/Typewriter';
 import { useAuth } from '@/contexts/AuthContext';
+import storage from '@/src/utils/storage';
 
 export default function Welcome() {
   const router = useRouter();
@@ -69,8 +70,10 @@ export default function Welcome() {
 
         <TouchableOpacity
           style={styles.skipButton}
-          onPress={() => {
+          onPress={async () => {
             console.log('Continue as guest clicked');
+            // Clear all local data for guest users
+            await storage.clearAll();
             router.push('/onboarding/intro2');
           }}
         >

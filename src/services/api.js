@@ -76,8 +76,10 @@ async function callGoogleAI(prompt, imageBase64, model) {
     mimeType = "image/heic";
   }
 
-  // Extract base64 data without the data:image prefix
-  const base64Data = imageBase64.split(',')[1] || imageBase64;
+  // Extract base64 data without the data:image prefix and clean whitespace
+  const rawBase64 = imageBase64.split(',')[1] || imageBase64;
+  // Remove all whitespace characters (spaces, tabs, newlines) from base64 string
+  const base64Data = rawBase64.replace(/\s/g, '');
 
   const requestBody = {
     contents: [{

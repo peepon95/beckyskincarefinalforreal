@@ -51,160 +51,169 @@ export default function Home() {
   const latestScan = getLatestScan();
 
   return (
-    <LinearGradient
-      colors={['#F8E8FF', '#FFF0F5', '#F3E8FF']}
-      style={styles.container}
-    >
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
+    <View style={styles.wrapper}>
+      <LinearGradient
+        colors={['#F8E8FF', '#FFF0F5', '#F3E8FF']}
+        style={styles.container}
       >
-        {/* 1. Header Section */}
-        <View style={styles.header}>
-          <Text style={styles.greeting}>{getGreeting()}, there 💜</Text>
-          <Text style={styles.subtext}>Here's your gentle skin space for today.</Text>
-        </View>
-
-        {/* 2. Check Your Skin Card */}
-        <View style={styles.heroCard}>
-          <View style={styles.iconCircle}>
-            <Camera color="#8B5CF6" size={28} strokeWidth={2} />
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          {/* 1. Header Section */}
+          <View style={styles.header}>
+            <Text style={styles.greeting}>{getGreeting()}, there 💜</Text>
+            <Text style={styles.subtext}>Here's your gentle skin space for today.</Text>
           </View>
 
-          <Text style={styles.heroTitle}>Check Your Skin</Text>
-          <Text style={styles.heroDescription}>
-            Upload a selfie for Becky's AI-powered skin analysis.
-          </Text>
+          {/* 2. Check Your Skin Card */}
+          <View style={styles.heroCard}>
+            <View style={styles.iconCircle}>
+              <Camera color="#8B5CF6" size={28} strokeWidth={2} />
+            </View>
 
-          {/* Pills */}
-          <View style={styles.pillsContainer}>
-            <View style={styles.pill}>
-              <Sparkles color="#8B5CF6" size={14} strokeWidth={2} />
-              <Text style={styles.pillText}>Personalised insights</Text>
-            </View>
-            <View style={styles.pill}>
-              <Heart color="#EC4899" size={14} strokeWidth={2} />
-              <Text style={styles.pillText}>Gentle recommendations</Text>
-            </View>
-            <View style={styles.pill}>
-              <TrendingUp color="#8B5CF6" size={14} strokeWidth={2} />
-              <Text style={styles.pillText}>Track your progress</Text>
-            </View>
-          </View>
+            <Text style={styles.heroTitle}>Check Your Skin</Text>
+            <Text style={styles.heroDescription}>
+              Upload a selfie for Becky's AI-powered skin analysis.
+            </Text>
 
-          {/* Gradient Button */}
-          <TouchableOpacity
-            style={styles.primaryButton}
-            onPress={() => router.push('/onboarding/photo')}
-            activeOpacity={0.9}
-          >
-            <LinearGradient
-              colors={['#8B5CF6', '#EC4899']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              style={styles.primaryButtonGradient}
+            {/* Pills */}
+            <View style={styles.pillsContainer}>
+              <View style={styles.pill}>
+                <Sparkles color="#8B5CF6" size={14} strokeWidth={2} />
+                <Text style={styles.pillText}>Personalised insights</Text>
+              </View>
+              <View style={styles.pill}>
+                <Heart color="#EC4899" size={14} strokeWidth={2} />
+                <Text style={styles.pillText}>Gentle recommendations</Text>
+              </View>
+              <View style={styles.pill}>
+                <TrendingUp color="#8B5CF6" size={14} strokeWidth={2} />
+                <Text style={styles.pillText}>Track your progress</Text>
+              </View>
+            </View>
+
+            {/* Gradient Button */}
+            <TouchableOpacity
+              style={styles.primaryButton}
+              onPress={() => router.push('/onboarding/photo')}
+              activeOpacity={0.9}
             >
-              <Text style={styles.primaryButtonText}>Start New Scan</Text>
-            </LinearGradient>
+              <LinearGradient
+                colors={['#8B5CF6', '#EC4899']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={styles.primaryButtonGradient}
+              >
+                <Text style={styles.primaryButtonText}>Start New Scan</Text>
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
+
+          {/* 3. Stat Bubbles */}
+          <View style={styles.summaryStrip}>
+            <View style={styles.summaryPill}>
+              <Text style={styles.summaryLabel}>SKIN HEALTH SCORE</Text>
+              <Text style={styles.summaryValue}>
+                {latestScan?.healthScore || '70'}
+              </Text>
+            </View>
+
+
+
+            <View style={styles.summaryPill}>
+              <Text style={styles.summaryLabel}>LAST SCAN</Text>
+              <Text style={styles.summaryValue}>
+                {latestScan
+                  ? new Date(latestScan.created_at).toLocaleDateString('en-US', { day: 'numeric', month: 'short' })
+                  : 'Nov 27'}
+              </Text>
+            </View>
+          </View>
+
+          {/* 4. Becky's Gentle Tip */}
+          <View style={styles.tipCard}>
+            <View style={styles.tipIcon}>
+              <Text style={styles.tipEmoji}>🌙</Text>
+            </View>
+            <View style={styles.tipContent}>
+              <Text style={styles.tipTitle}>Becky's gentle tip</Text>
+              <Text style={styles.tipText}>
+                Your skin loves consistency. Keep things simple and kind today 💜
+              </Text>
+            </View>
+          </View>
+
+          {/* 5. Your Scan History */}
+          {savedScans.length > 0 && (
+            <View style={styles.savedScansSection}>
+              <Text style={styles.sectionTitle}>Your Scan History</Text>
+              {savedScans.map((scan) => (
+                <TouchableOpacity
+                  key={scan.unique_id}
+                  style={styles.scanCard}
+                  onPress={() => router.push({
+                    pathname: '/skin-results',
+                    params: { scanId: scan.unique_id }
+                  })}
+                  activeOpacity={0.7}
+                >
+                  <View style={styles.scanCardContent}>
+                    <View style={styles.scanLeft}>
+                      <View style={styles.scanIconContainer}>
+                        <Camera color="#8B5CF6" size={20} strokeWidth={2} />
+                      </View>
+                      <View style={styles.scanDetails}>
+                        <Text style={styles.scanTitle}>{scan.display_title || 'Skin Analysis'}</Text>
+                        <Text style={styles.scanSubtext}>
+                          {scan.skin_type || 'Unknown'} · {scan.key_concerns?.[0]?.name || 'No concerns'}
+                        </Text>
+                        <Text style={styles.scanCTA}>Tap to view details</Text>
+                      </View>
+                    </View>
+
+                    <View style={styles.scanThumbnail} />
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
+
+          <View style={{ height: 100 }} />
+        </ScrollView>
+
+        {/* Bottom Navigation */}
+        <View style={styles.bottomNav}>
+          <TouchableOpacity style={styles.navTab} activeOpacity={0.7}>
+            <HomeIcon color="#8B5CF6" size={24} strokeWidth={2} />
+            <Text style={[styles.navLabel, styles.navLabelActive]}>Home</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.navTab}
+            onPress={() => router.push('/profile')}
+            activeOpacity={0.7}
+          >
+            <User color="#9CA3AF" size={24} strokeWidth={2} />
+            <Text style={styles.navLabel}>Profile</Text>
           </TouchableOpacity>
         </View>
-
-        {/* 3. Stat Bubbles */}
-        <View style={styles.summaryStrip}>
-          <View style={styles.summaryPill}>
-            <Text style={styles.summaryLabel}>SKIN HEALTH SCORE</Text>
-            <Text style={styles.summaryValue}>
-              {latestScan?.healthScore || '70'}
-            </Text>
-          </View>
-
-
-
-          <View style={styles.summaryPill}>
-            <Text style={styles.summaryLabel}>LAST SCAN</Text>
-            <Text style={styles.summaryValue}>
-              {latestScan
-                ? new Date(latestScan.created_at).toLocaleDateString('en-US', { day: 'numeric', month: 'short' })
-                : 'Nov 27'}
-            </Text>
-          </View>
-        </View>
-
-        {/* 4. Becky's Gentle Tip */}
-        <View style={styles.tipCard}>
-          <View style={styles.tipIcon}>
-            <Text style={styles.tipEmoji}>🌙</Text>
-          </View>
-          <View style={styles.tipContent}>
-            <Text style={styles.tipTitle}>Becky's gentle tip</Text>
-            <Text style={styles.tipText}>
-              Your skin loves consistency. Keep things simple and kind today 💜
-            </Text>
-          </View>
-        </View>
-
-        {/* 5. Your Scan History */}
-        {savedScans.length > 0 && (
-          <View style={styles.savedScansSection}>
-            <Text style={styles.sectionTitle}>Your Scan History</Text>
-            {savedScans.map((scan) => (
-              <TouchableOpacity
-                key={scan.unique_id}
-                style={styles.scanCard}
-                onPress={() => router.push({
-                  pathname: '/skin-results',
-                  params: { scanId: scan.unique_id }
-                })}
-                activeOpacity={0.7}
-              >
-                <View style={styles.scanCardContent}>
-                  <View style={styles.scanLeft}>
-                    <View style={styles.scanIconContainer}>
-                      <Camera color="#8B5CF6" size={20} strokeWidth={2} />
-                    </View>
-                    <View style={styles.scanDetails}>
-                      <Text style={styles.scanTitle}>{scan.display_title || 'Skin Analysis'}</Text>
-                      <Text style={styles.scanSubtext}>
-                        {scan.skin_type || 'Unknown'} · {scan.key_concerns?.[0]?.name || 'No concerns'}
-                      </Text>
-                      <Text style={styles.scanCTA}>Tap to view details</Text>
-                    </View>
-                  </View>
-
-                  <View style={styles.scanThumbnail} />
-                </View>
-              </TouchableOpacity>
-            ))}
-          </View>
-        )}
-
-        <View style={{ height: 100 }} />
-      </ScrollView>
-
-      {/* Bottom Navigation */}
-      <View style={styles.bottomNav}>
-        <TouchableOpacity style={styles.navTab} activeOpacity={0.7}>
-          <HomeIcon color="#8B5CF6" size={24} strokeWidth={2} />
-          <Text style={[styles.navLabel, styles.navLabelActive]}>Home</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.navTab}
-          onPress={() => router.push('/profile')}
-          activeOpacity={0.7}
-        >
-          <User color="#9CA3AF" size={24} strokeWidth={2} />
-          <Text style={styles.navLabel}>Profile</Text>
-        </TouchableOpacity>
-      </View>
-    </LinearGradient>
+      </LinearGradient>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  wrapper: {
+    flex: 1,
+    backgroundColor: '#F5F5F7',
+  },
   container: {
     flex: 1,
+    maxWidth: 500,
+    width: '100%',
+    alignSelf: 'center',
   },
   scrollView: {
     flex: 1,

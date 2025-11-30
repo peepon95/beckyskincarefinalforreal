@@ -34,75 +34,84 @@ export default function ConcernsOnboarding() {
   };
 
   return (
-    <LinearGradient
-      colors={['#FFF0F5', '#F8E8FF', '#E6F3FF']}
-      style={styles.container}
-    >
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.content}
-        showsVerticalScrollIndicator={false}
+    <View style={styles.wrapper}>
+      <LinearGradient
+        colors={['#FFF0F5', '#F8E8FF', '#E6F3FF']}
+        style={styles.container}
       >
-        <View style={styles.titleSection}>
-          <Text style={styles.greeting}>Hi {data.name},</Text>
-          <Typewriter
-            text="What does your skin need help with right now?"
-            speed={50}
-            style={styles.title}
-          />
-        </View>
-
-        <View style={styles.pillsContainer}>
-          {concerns.map((concern) => {
-            const isSelected = selectedConcerns.includes(concern);
-
-            return (
-              <TouchableOpacity
-                key={concern}
-                style={[
-                  styles.pill,
-                  isSelected && styles.pillSelected,
-                ]}
-                onPress={() => toggleConcern(concern)}
-                activeOpacity={0.7}
-              >
-                <Text style={[
-                  styles.pillText,
-                  isSelected && styles.pillTextSelected,
-                ]}>
-                  {concern}
-                </Text>
-              </TouchableOpacity>
-            );
-          })}
-        </View>
-      </ScrollView>
-
-      <View style={styles.footer}>
-        <TouchableOpacity
-          style={[styles.nextButton, selectedConcerns.length === 0 && styles.nextButtonDisabled]}
-          onPress={handleNext}
-          disabled={selectedConcerns.length === 0}
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.content}
+          showsVerticalScrollIndicator={false}
         >
-          <LinearGradient
-            colors={['#8B5CF6', '#EC4899']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            style={styles.buttonGradient}
+          <View style={styles.titleSection}>
+            <Text style={styles.greeting}>Hi {data.name},</Text>
+            <Typewriter
+              text="What does your skin need help with right now?"
+              speed={50}
+              style={styles.title}
+            />
+          </View>
+
+          <View style={styles.pillsContainer}>
+            {concerns.map((concern) => {
+              const isSelected = selectedConcerns.includes(concern);
+
+              return (
+                <TouchableOpacity
+                  key={concern}
+                  style={[
+                    styles.pill,
+                    isSelected && styles.pillSelected,
+                  ]}
+                  onPress={() => toggleConcern(concern)}
+                  activeOpacity={0.7}
+                >
+                  <Text style={[
+                    styles.pillText,
+                    isSelected && styles.pillTextSelected,
+                  ]}>
+                    {concern}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </ScrollView>
+
+        <View style={styles.footer}>
+          <TouchableOpacity
+            style={[styles.nextButton, selectedConcerns.length === 0 && styles.nextButtonDisabled]}
+            onPress={handleNext}
+            disabled={selectedConcerns.length === 0}
           >
-            <Text style={[styles.nextButtonText, selectedConcerns.length === 0 && styles.nextButtonTextDisabled]}>
-              Next
-            </Text>
-          </LinearGradient>
-        </TouchableOpacity>
-      </View>
-    </LinearGradient>
+            <LinearGradient
+              colors={['#8B5CF6', '#EC4899']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={styles.buttonGradient}
+            >
+              <Text style={[styles.nextButtonText, selectedConcerns.length === 0 && styles.nextButtonTextDisabled]}>
+                Next
+              </Text>
+            </LinearGradient>
+          </TouchableOpacity>
+        </View>
+      </LinearGradient>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  wrapper: {
+    flex: 1,
+    backgroundColor: '#F5F5F7',
+  },
   container: {
     flex: 1,
+    maxWidth: 500,
+    width: '100%',
+    alignSelf: 'center',
   },
   scrollView: {
     flex: 1,

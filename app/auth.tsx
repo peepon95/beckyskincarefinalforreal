@@ -14,6 +14,7 @@ import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Mail, Lock, ArrowRight, ArrowLeft } from 'lucide-react-native';
 import { useAuth } from '../contexts/AuthContext';
+import storage from '../src/utils/storage';
 
 export default function Auth() {
   const router = useRouter();
@@ -173,7 +174,11 @@ export default function Auth() {
             {/* Skip Option */}
             <TouchableOpacity
               style={styles.skipButton}
-              onPress={() => router.replace('/onboarding/intro2')}
+              onPress={async () => {
+                // Clear all local data for guest users
+                await storage.clearAll();
+                router.replace('/onboarding/intro2');
+              }}
               disabled={loading}
             >
               <Text style={styles.skipText}>Continue without account</Text>

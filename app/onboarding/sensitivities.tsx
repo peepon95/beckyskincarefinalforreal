@@ -42,72 +42,81 @@ export default function SensitivitiesScreen() {
   };
 
   return (
-    <LinearGradient
-      colors={['#FFF0F5', '#F8E8FF', '#E6F3FF']}
-      style={styles.container}
-    >
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.content}
-        showsVerticalScrollIndicator={false}
+    <View style={styles.wrapper}>
+      <LinearGradient
+        colors={['#FFF0F5', '#F8E8FF', '#E6F3FF']}
+        style={styles.container}
       >
-        <View style={styles.titleSection}>
-          <Typewriter
-            text="Is your skin sensitive to anything?"
-            speed={50}
-            style={styles.title}
-          />
-          <Text style={styles.subtitle}>This helps Becky keep your suggestions gentle.</Text>
-        </View>
-
-        <View style={styles.chipsContainer}>
-          {sensitivityOptions.map((sensitivity) => {
-            const isSelected = selectedSensitivities.includes(sensitivity);
-
-            return (
-              <TouchableOpacity
-                key={sensitivity}
-                style={[
-                  styles.chip,
-                  isSelected && styles.chipSelected,
-                ]}
-                onPress={() => toggleSensitivity(sensitivity)}
-                activeOpacity={0.7}
-              >
-                <Text style={[
-                  styles.chipText,
-                  isSelected && styles.chipTextSelected,
-                ]}>
-                  {sensitivity}
-                </Text>
-              </TouchableOpacity>
-            );
-          })}
-        </View>
-      </ScrollView>
-
-      <View style={styles.footer}>
-        <TouchableOpacity
-          style={styles.nextButton}
-          onPress={handleNext}
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.content}
+          showsVerticalScrollIndicator={false}
         >
-          <LinearGradient
-            colors={['#8B5CF6', '#EC4899']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            style={styles.buttonGradient}
+          <View style={styles.titleSection}>
+            <Typewriter
+              text="Is your skin sensitive to anything?"
+              speed={50}
+              style={styles.title}
+            />
+            <Text style={styles.subtitle}>This helps Becky keep your suggestions gentle.</Text>
+          </View>
+
+          <View style={styles.chipsContainer}>
+            {sensitivityOptions.map((sensitivity) => {
+              const isSelected = selectedSensitivities.includes(sensitivity);
+
+              return (
+                <TouchableOpacity
+                  key={sensitivity}
+                  style={[
+                    styles.chip,
+                    isSelected && styles.chipSelected,
+                  ]}
+                  onPress={() => toggleSensitivity(sensitivity)}
+                  activeOpacity={0.7}
+                >
+                  <Text style={[
+                    styles.chipText,
+                    isSelected && styles.chipTextSelected,
+                  ]}>
+                    {sensitivity}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </ScrollView>
+
+        <View style={styles.footer}>
+          <TouchableOpacity
+            style={styles.nextButton}
+            onPress={handleNext}
           >
-            <Text style={styles.nextButtonText}>Next</Text>
-          </LinearGradient>
-        </TouchableOpacity>
-      </View>
-    </LinearGradient>
+            <LinearGradient
+              colors={['#8B5CF6', '#EC4899']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={styles.buttonGradient}
+            >
+              <Text style={styles.nextButtonText}>Next</Text>
+            </LinearGradient>
+          </TouchableOpacity>
+        </View>
+      </LinearGradient>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  wrapper: {
+    flex: 1,
+    backgroundColor: '#F5F5F7',
+  },
   container: {
     flex: 1,
+    maxWidth: 500,
+    width: '100%',
+    alignSelf: 'center',
   },
   scrollView: {
     flex: 1,

@@ -83,138 +83,149 @@ export default function ActionPlan() {
 
   if (!planData) {
     return (
-      <LinearGradient
-        colors={['#FFF0F5', '#F8E8FF', '#E6F3FF']}
-        style={styles.container}
-      >
-        <View style={styles.errorContainer}>
-          <AlertCircle color="#EF4444" size={64} strokeWidth={1.5} />
-          <Text style={styles.errorTitle}>No Plan Data</Text>
-          <Text style={styles.errorText}>
-            No action plan data found. Please complete a skin analysis first.
-          </Text>
-          <TouchableOpacity
-            style={styles.errorButton}
-            onPress={() => router.push('/home')}
-          >
-            <Text style={styles.errorButtonText}>Go Home</Text>
-          </TouchableOpacity>
-        </View>
-      </LinearGradient>
+      <View style={styles.wrapper}>
+        <LinearGradient
+          colors={['#FFF0F5', '#F8E8FF', '#E6F3FF']}
+          style={styles.container}
+        >
+          <View style={styles.errorContainer}>
+            <AlertCircle color="#EF4444" size={64} strokeWidth={1.5} />
+            <Text style={styles.errorTitle}>No Plan Data</Text>
+            <Text style={styles.errorText}>
+              No action plan data found. Please complete a skin analysis first.
+            </Text>
+            <TouchableOpacity
+              style={styles.errorButton}
+              onPress={() => router.push('/home')}
+            >
+              <Text style={styles.errorButtonText}>Go Home</Text>
+            </TouchableOpacity>
+          </View>
+        </LinearGradient>
+      </View>
     );
   }
 
   return (
-    <LinearGradient
-      colors={['#FFF0F5', '#F8E8FF', '#E6F3FF']}
-      style={styles.container}
-    >
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
+    <View style={styles.wrapper}>
+      <LinearGradient
+        colors={['#FFF0F5', '#F8E8FF', '#E6F3FF']}
+        style={styles.container}
       >
-        {/* Header */}
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-            <ArrowLeft color="#2C2C2C" size={24} strokeWidth={2} />
-          </TouchableOpacity>
-          <View style={styles.headerText}>
-            <Text style={styles.title}>Your Action Plan</Text>
-            <Text style={styles.subtitle}>
-              Based on your skin analysis, here are the steps you can take to support your skin.
-            </Text>
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          {/* Header */}
+          <View style={styles.header}>
+            <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+              <ArrowLeft color="#2C2C2C" size={24} strokeWidth={2} />
+            </TouchableOpacity>
+            <View style={styles.headerText}>
+              <Text style={styles.title}>Your Action Plan</Text>
+              <Text style={styles.subtitle}>
+                Based on your skin analysis, here are the steps you can take to support your skin.
+              </Text>
+            </View>
           </View>
-        </View>
 
-        {/* Action Plan Steps */}
-        {planData.action_plan_steps && planData.action_plan_steps.length > 0 && (
-          <View style={styles.section}>
-            {planData.action_plan_steps.map((step: any, index: number) => (
-              <View key={index} style={styles.stepCard}>
-                <View style={styles.stepHeader}>
-                  <View style={styles.stepIcon}>
-                    <CheckCircle color="#8B5CF6" size={20} strokeWidth={2} />
-                  </View>
-                  <View style={styles.stepTitleContainer}>
-                    <Text style={styles.stepTitle}>{step.title}</Text>
-                    <View
-                      style={[
-                        styles.priorityBadge,
-                        { backgroundColor: getPriorityColor(step.priority) }
-                      ]}
-                    >
-                      <Text style={styles.priorityText}>{step.priority}</Text>
+          {/* Action Plan Steps */}
+          {planData.action_plan_steps && planData.action_plan_steps.length > 0 && (
+            <View style={styles.section}>
+              {planData.action_plan_steps.map((step: any, index: number) => (
+                <View key={index} style={styles.stepCard}>
+                  <View style={styles.stepHeader}>
+                    <View style={styles.stepIcon}>
+                      <CheckCircle color="#8B5CF6" size={20} strokeWidth={2} />
+                    </View>
+                    <View style={styles.stepTitleContainer}>
+                      <Text style={styles.stepTitle}>{step.title}</Text>
+                      <View
+                        style={[
+                          styles.priorityBadge,
+                          { backgroundColor: getPriorityColor(step.priority) }
+                        ]}
+                      >
+                        <Text style={styles.priorityText}>{step.priority}</Text>
+                      </View>
                     </View>
                   </View>
+                  <Text style={styles.stepDescription}>{step.description}</Text>
                 </View>
-                <Text style={styles.stepDescription}>{step.description}</Text>
-              </View>
-            ))}
-          </View>
-        )}
-
-        {/* Quick Tips */}
-        {planData.quick_tips && planData.quick_tips.length > 0 && (
-          <View style={styles.tipsSection}>
-            <View style={styles.tipsSectionHeader}>
-              <Sparkles color="#EC4899" size={20} strokeWidth={2} />
-              <Text style={styles.tipsTitle}>Quick Tips</Text>
+              ))}
             </View>
-            {planData.quick_tips.map((tip: string, index: number) => (
-              <View key={index} style={styles.tipRow}>
-                <View style={styles.tipBullet} />
-                <Text style={styles.tipText}>{tip}</Text>
+          )}
+
+          {/* Quick Tips */}
+          {planData.quick_tips && planData.quick_tips.length > 0 && (
+            <View style={styles.tipsSection}>
+              <View style={styles.tipsSectionHeader}>
+                <Sparkles color="#EC4899" size={20} strokeWidth={2} />
+                <Text style={styles.tipsTitle}>Quick Tips</Text>
               </View>
-            ))}
+              {planData.quick_tips.map((tip: string, index: number) => (
+                <View key={index} style={styles.tipRow}>
+                  <View style={styles.tipBullet} />
+                  <Text style={styles.tipText}>{tip}</Text>
+                </View>
+              ))}
+            </View>
+          )}
+
+          {/* Disclaimer */}
+          <View style={styles.disclaimerCard}>
+            <AlertCircle color="#6B7280" size={18} strokeWidth={2} />
+            <Text style={styles.disclaimerText}>
+              This action plan provides general skincare guidance only and is not a medical diagnosis.
+              For persistent or concerning changes, please consult a qualified dermatologist.
+            </Text>
           </View>
-        )}
 
-        {/* Disclaimer */}
-        <View style={styles.disclaimerCard}>
-          <AlertCircle color="#6B7280" size={18} strokeWidth={2} />
-          <Text style={styles.disclaimerText}>
-            This action plan provides general skincare guidance only and is not a medical diagnosis.
-            For persistent or concerning changes, please consult a qualified dermatologist.
-          </Text>
-        </View>
+          <View style={{ height: 180 }} />
+        </ScrollView>
 
-        <View style={{ height: 180 }} />
-      </ScrollView>
-
-      {/* Bottom Actions */}
-      <View style={styles.bottomActions}>
-        <TouchableOpacity
-          style={styles.secondaryButton}
-          onPress={handleSavePlan}
-          disabled={isSaving}
-        >
-          <Text style={styles.secondaryButtonText}>
-            {isSaving ? 'Saving...' : 'Save this plan'}
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.primaryButton}
-          onPress={() => router.push('/home')}
-        >
-          <LinearGradient
-            colors={['#8B5CF6', '#EC4899']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            style={styles.primaryButtonGradient}
+        {/* Bottom Actions */}
+        <View style={styles.bottomActions}>
+          <TouchableOpacity
+            style={styles.secondaryButton}
+            onPress={handleSavePlan}
+            disabled={isSaving}
           >
-            <Text style={styles.primaryButtonText}>Done</Text>
-          </LinearGradient>
-        </TouchableOpacity>
-      </View>
-    </LinearGradient>
+            <Text style={styles.secondaryButtonText}>
+              {isSaving ? 'Saving...' : 'Save this plan'}
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.primaryButton}
+            onPress={() => router.push('/home')}
+          >
+            <LinearGradient
+              colors={['#8B5CF6', '#EC4899']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={styles.primaryButtonGradient}
+            >
+              <Text style={styles.primaryButtonText}>Done</Text>
+            </LinearGradient>
+          </TouchableOpacity>
+        </View>
+      </LinearGradient>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  wrapper: {
+    flex: 1,
+    backgroundColor: '#F5F5F7',
+  },
   container: {
     flex: 1,
+    maxWidth: 500,
+    width: '100%',
+    alignSelf: 'center',
   },
   scrollView: {
     flex: 1,
