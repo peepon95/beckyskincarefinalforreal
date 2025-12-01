@@ -46,17 +46,24 @@ export default function SkinResults() {
           ...data,
           // Ensure photoUri is at top level
           photoUri: data.photoUri || data.skinAnalysis?.photoUri,
-          // Ensure action plan fields are at top level
-          action_plan_steps: data.action_plan_steps || data.actionPlan?.action_plan_steps || [],
-          quick_tips: data.quick_tips || data.actionPlan?.quick_tips || [],
-          // Add fallback for missing assessment
-          overall_assessment: data.overall_assessment ||
+          // Ensure ALL fields are at top level - check multiple possible locations
+          overall_assessment: data.overall_assessment || data.skinAnalysis?.overall_assessment ||
             "Based on the analysis of your skin, we've identified several areas that may benefit from targeted care. Please review the concerns and recommendations below.",
+          skin_type: data.skin_type || data.skinAnalysis?.skin_type || 'Unknown',
+          key_concerns: data.key_concerns || data.skinAnalysis?.key_concerns || [],
+          ingredients_to_avoid: data.ingredients_to_avoid || data.skinAnalysis?.ingredients_to_avoid || [],
+          ingredients_that_help: data.ingredients_that_help || data.skinAnalysis?.ingredients_that_help || [],
+          dermatology_advice: data.dermatology_advice || data.skinAnalysis?.dermatology_advice,
+          action_plan_steps: data.action_plan_steps || data.actionPlan?.action_plan_steps || data.skinAnalysis?.action_plan_steps || [],
+          quick_tips: data.quick_tips || data.actionPlan?.quick_tips || data.skinAnalysis?.quick_tips || [],
+          healthScore: data.healthScore || data.skinAnalysis?.healthScore || 70,
         };
 
         console.log('✅ Normalized data - Photo:', normalizedData.photoUri ? 'Yes' : 'No');
         console.log('✅ Normalized data - Assessment:', normalizedData.overall_assessment ? 'Yes' : 'No');
         console.log('✅ Normalized data - Action steps:', normalizedData.action_plan_steps.length);
+        console.log('✅ Normalized data - Ingredients to avoid:', normalizedData.ingredients_to_avoid.length);
+        console.log('✅ Normalized data - Ingredients that help:', normalizedData.ingredients_that_help.length);
 
         setResults(normalizedData);
       }
