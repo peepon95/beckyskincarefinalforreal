@@ -75,30 +75,14 @@ export default function SkinResults() {
                 { name: "Centella Asiatica (Cica)", use_for: "Known for its soothing properties, may help calm irritated skin and support healing.", product_type: "Serum|Moisturiser" }
               ],
           dermatology_advice: data.dermatology_advice || data.skinAnalysis?.dermatology_advice,
-          action_plan_steps: (data.action_plan_steps && data.action_plan_steps.length > 0)
-            ? data.action_plan_steps
-            : (data.actionPlan?.action_plan_steps && data.actionPlan.action_plan_steps.length > 0)
-              ? data.actionPlan.action_plan_steps
-              : (data.skinAnalysis?.action_plan_steps && data.skinAnalysis.action_plan_steps.length > 0)
-                ? data.skinAnalysis.action_plan_steps
-                : [
-                  { title: "Consult a Dermatologist", priority: "High", description: "Schedule an appointment with a dermatologist for an accurate diagnosis and a personalized treatment plan, especially for the inflamed lesion and scarring." },
-                  { title: "Gentle Cleansing & Hydration", priority: "Medium", description: "Use a mild, pH-balanced cleanser twice daily. Follow with a lightweight, non-comedogenic moisturizer to support skin barrier function without clogging pores." },
-                  { title: "Incorporate Targeted Treatment", priority: "High", description: "After dermatologist consultation, consider incorporating prescribed topical treatments or over-the-counter options with beneficial ingredients like salicylic acid or benzoyl peroxide to manage active breakouts." },
-                  { title: "Daily Sun Protection", priority: "High", description: "Apply a broad-spectrum sunscreen with at least SPF 30 every morning, even on cloudy days, to protect inflamed areas and prevent dark spots from forming or worsening." },
-                  { title: "Hands-Off Policy", priority: "High", description: "Resist the urge to pick, pop, or squeeze any blemishes to prevent further inflammation, infection, and potential permanent scarring." }
-                ],
-          quick_tips: (data.quick_tips && data.quick_tips.length > 0)
-            ? data.quick_tips
-            : (data.actionPlan?.quick_tips && data.actionPlan.quick_tips.length > 0)
-              ? data.actionPlan.quick_tips
-              : (data.skinAnalysis?.quick_tips && data.skinAnalysis.quick_tips.length > 0)
-                ? data.skinAnalysis.quick_tips
-                : [
-                  "Stay hydrated by drinking plenty of water throughout the day.",
-                  "Get adequate sleep (7-9 hours) to support skin repair.",
-                  "Avoid touching your face with unwashed hands."
-                ],
+          action_plan_steps: data.action_plan_steps
+            || data.actionPlan?.action_plan_steps
+            || data.skinAnalysis?.action_plan_steps
+            || [],
+          quick_tips: data.quick_tips
+            || data.actionPlan?.quick_tips
+            || data.skinAnalysis?.quick_tips
+            || [],
           healthScore: data.healthScore || data.skinAnalysis?.healthScore || 70,
         };
 

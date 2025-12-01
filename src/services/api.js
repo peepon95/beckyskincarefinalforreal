@@ -194,6 +194,17 @@ async function callGoogleAI(prompt, imageBase64, model) {
     throw new Error('Unexpected response format. Please try again.');
   }
 
+  // Check if response was truncated
+  const finishReason = data.candidates[0].finishReason;
+  if (finishReason && finishReason !== 'STOP') {
+    console.warn(`⚠️ Response may be incomplete. Finish reason: ${finishReason}`);
+    if (finishReason === 'MAX_TOKENS') {
+      console.warn('⚠️ Response was truncated due to length. Some data may be missing.');
+    } else if (finishReason === 'SAFETY') {
+      console.warn('⚠️ Response was filtered for safety. Some data may be missing.');
+    }
+  }
+
   const textContent = data.candidates[0].content.parts
     .filter(part => part.text)
     .map(part => part.text)
@@ -506,32 +517,33 @@ CRITICAL RULES:
     }
 
     if (!data.action_plan_steps || !Array.isArray(data.action_plan_steps) || data.action_plan_steps.length === 0) {
-      console.warn('⚠️ No action plan steps received, adding default steps');
+      console.error('⚠️ ⚠️ ⚠️ AI DID NOT RETURN ACTION PLAN STEPS - Using generic defaults');
+      console.error('This means the AI response was incomplete or truncated');
       data.action_plan_steps = [
         {
           title: "Consult a Dermatologist",
           priority: "High",
-          description: "Schedule an appointment with a dermatologist for an accurate diagnosis and a personalized treatment plan, especially for the inflamed lesion and scarring."
+          description: "Schedule an appointment with a dermatologist for a professional assessment and personalized treatment plan."
         },
         {
-          title: "Gentle Cleansing & Hydration",
+          title: "Gentle Daily Cleansing",
           priority: "Medium",
-          description: "Use a mild, pH-balanced cleanser twice daily. Follow with a lightweight, non-comedogenic moisturizer to support skin barrier function without clogging pores."
+          description: "Use a mild, pH-balanced cleanser twice daily to keep skin clean without irritation."
         },
         {
-          title: "Incorporate Targeted Treatment",
-          priority: "High",
-          description: "After dermatologist consultation, consider incorporating prescribed topical treatments or over-the-counter options with beneficial ingredients like salicylic acid or benzoyl peroxide to manage active breakouts."
+          title: "Moisturize Regularly",
+          priority: "Medium",
+          description: "Apply a non-comedogenic moisturizer to support skin barrier health."
         },
         {
           title: "Daily Sun Protection",
           priority: "High",
-          description: "Apply a broad-spectrum sunscreen with at least SPF 30 every morning, even on cloudy days, to protect inflamed areas and prevent dark spots from forming or worsening."
+          description: "Apply broad-spectrum SPF 30+ sunscreen every morning to protect your skin."
         },
         {
-          title: "Hands-Off Policy",
-          priority: "High",
-          description: "Resist the urge to pick, pop, or squeeze any blemishes to prevent further inflammation, infection, and potential permanent scarring."
+          title: "Avoid Touching Face",
+          priority: "Medium",
+          description: "Keep hands away from your face to prevent irritation and bacteria transfer."
         }
       ];
     }
