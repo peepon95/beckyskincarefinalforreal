@@ -297,10 +297,48 @@ export default function SkinResults() {
       <View style={styles.bottomActions}>
         <TouchableOpacity
           style={styles.primaryButton}
-          onPress={() => router.push({
-            pathname: '/action-plan',
-            params: { analysisData: JSON.stringify(results) }
-          })}
+          onPress={() => {
+            // Ensure action plan steps exist before navigating
+            const dataToPass = {
+              ...results,
+              action_plan_steps: results.action_plan_steps && results.action_plan_steps.length > 0
+                ? results.action_plan_steps
+                : [
+                  {
+                    title: "Gentle Skincare Routine",
+                    priority: "High",
+                    description: "Establish a consistent routine using mild, non-comedogenic cleansers and moisturisers to support skin health without causing further irritation."
+                  },
+                  {
+                    title: "Targeted Treatment for Breakouts",
+                    priority: "Medium",
+                    description: "Incorporate a spot treatment containing ingredients like salicylic acid or benzoyl peroxide on the visible raised lesions as needed to help calm inflammation."
+                  },
+                  {
+                    title: "Sun Protection",
+                    priority: "Medium",
+                    description: "Apply a broad-spectrum SPF 30+ sunscreen daily to protect the skin and prevent post-inflammatory hyperpigmentation from the visible lesions."
+                  }
+                ],
+              quick_tips: results.quick_tips && results.quick_tips.length > 0
+                ? results.quick_tips
+                : [
+                  "Avoid picking or squeezing any raised lesions to prevent scarring.",
+                  "Keep your hands off your face throughout the day.",
+                  "Change pillowcases regularly to reduce bacteria transfer."
+                ]
+            };
+
+            console.log('🚀 Navigating to action plan with data:', {
+              hasActionSteps: dataToPass.action_plan_steps.length,
+              hasQuickTips: dataToPass.quick_tips.length
+            });
+
+            router.push({
+              pathname: '/action-plan',
+              params: { analysisData: JSON.stringify(dataToPass) }
+            });
+          }}
         >
           <LinearGradient
             colors={['#8B5CF6', '#EC4899']}
