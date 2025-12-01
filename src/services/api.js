@@ -444,10 +444,11 @@ CRITICAL RULES:
 - Provide 3-5 key concerns if multiple features are visible
 - Suggest 2-4 ingredients to avoid and 4-6 ingredients that may help
 - All recommendations must relate to what you actually observe in the photo
-- Provide 4-6 action plan steps with specific, practical actions
+- Provide 5 detailed action plan steps with specific, practical actions
 - Action plan steps should be prioritized: High priority for urgent/important actions, Medium for beneficial routines, Low for optional enhancements
 - Quick tips should be 3-5 short, immediately actionable bullets
-- Action plan steps common examples: "Seek Professional Consultation", "Gentle Skincare Routine", "Targeted Treatment", "Sun Protection", "Hands Off / Don't Pick", "Hydration Focus", "Barrier Repair"
+- Action plan steps MUST be personalized to the image. Do NOT use generic advice.
+- Example action plan step titles: "Seek Professional Consultation", "Gentle Skincare Routine", "Targeted Treatment", "Sun Protection", "Hands Off / Don't Pick", "Hydration Focus", "Barrier Repair"
 - Keep the same calm, non-diagnostic Google AI Studio tone for action plan content`;
 
     const responseText = await callGoogleAI(prompt, imageBase64, SKIN_ANALYSIS_MODEL);

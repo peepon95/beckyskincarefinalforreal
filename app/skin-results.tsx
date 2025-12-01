@@ -199,72 +199,74 @@ export default function SkinResults() {
           </View>
         </View>
 
-        {/* Photo Section */}
-        {results.photoUri && (
-          <View style={styles.photoSection}>
-            <Image source={{ uri: results.photoUri }} style={styles.photoImage} />
-          </View>
-        )}
-
-        {/* Summary Pills */}
-        <View style={styles.pillsRow}>
-          <View style={styles.pillContainer}>
-            <Text style={styles.pillLabel}>SKIN HEALTH SCORE</Text>
-            <Text style={styles.pillValue}>
-              {results.healthScore || '70'}
-            </Text>
-          </View>
-
-          {results.key_concerns && results.key_concerns.length > 0 && (
-            <View style={styles.concernsPillContainer}>
-              <Text style={styles.pillLabel}>CONCERNS</Text>
-              {results.key_concerns.slice(0, 3).map((concern: any, idx: number) => (
-                <Text key={idx} style={styles.concernPill}>{concern.name}</Text>
-              ))}
-            </View>
-          )}
-        </View>
-
-        {/* Assessment Card */}
-        <View style={styles.sectionCard}>
-          <View style={styles.sectionHeader}>
-            <CheckCircle color="#10B981" size={20} strokeWidth={2} />
-            <Text style={styles.sectionTitle}>Assessment</Text>
-          </View>
-          <Text style={styles.assessmentText}>{results.overall_assessment}</Text>
-        </View>
-
-        {/* Skin Type Card */}
-        {results.skin_type && (
-          <View style={styles.sectionCard}>
-            <Text style={styles.sectionTitle}>Skin Type</Text>
-            <Text style={styles.assessmentText}>{results.skin_type}</Text>
-          </View>
-        )}
-
-        {/* Concerns Detected */}
-        {results.key_concerns && results.key_concerns.length > 0 && (
-          <View style={styles.sectionCard}>
-            <Text style={styles.sectionTitle}>Concerns Detected</Text>
-            {results.key_concerns.map((concern: any, index: number) => (
-              <View key={index} style={styles.concernCard}>
-                <View style={styles.concernHeader}>
-                  <Text style={styles.concernName}>{concern.name}</Text>
-                  <View
-                    style={[
-                      styles.severityBadge,
-                      { backgroundColor: getSeverityColor(concern.severity) }
-                    ]}
-                  >
-                    <Text style={[styles.severityText, { color: getSeverityTextColor(concern.severity) }]}>{concern.severity}</Text>
-                  </View>
-                </View>
-                <Text style={styles.concernLocation}>📍 {concern.location}</Text>
-                <Text style={styles.concernDescription}>{concern.short_description}</Text>
+        <View style={styles.splitLayout}>
+          {/* Left Column - Photo */}
+          <View style={styles.leftColumn}>
+            {results.photoUri && (
+              <View style={[styles.photoSection, { paddingHorizontal: 0 }]}>
+                <Image source={{ uri: results.photoUri }} style={styles.photoImage} />
               </View>
-            ))}
+            )}
           </View>
-        )}
+
+          {/* Right Column - Assessment & Details */}
+          <View style={styles.rightColumn}>
+            {/* Summary Pills */}
+            <View style={[styles.pillsRow, { paddingHorizontal: 0 }]}>
+              <View style={styles.pillContainer}>
+                <Text style={styles.pillLabel}>SKIN HEALTH SCORE</Text>
+                <Text style={styles.pillValue}>
+                  {results.healthScore || '70'}
+                </Text>
+              </View>
+
+              {results.key_concerns && results.key_concerns.length > 0 && (
+                <View style={styles.concernsPillContainer}>
+                  <Text style={styles.pillLabel}>CONCERNS</Text>
+                  {results.key_concerns.slice(0, 3).map((concern: any, idx: number) => (
+                    <Text key={idx} style={styles.concernPill}>{concern.name}</Text>
+                  ))}
+                </View>
+              )}
+            </View>
+
+            {/* Assessment Card */}
+            <View style={[styles.sectionCard, { marginHorizontal: 0 }]}>
+              <View style={styles.sectionHeader}>
+                <CheckCircle color="#10B981" size={20} strokeWidth={2} />
+                <Text style={styles.sectionTitle}>Assessment</Text>
+              </View>
+              <Text style={styles.assessmentText}>{results.overall_assessment}</Text>
+            </View>
+
+            {/* Skin Type Card */}
+            {results.skin_type && (
+              <View style={[styles.sectionCard, { marginHorizontal: 0 }]}>
+                <Text style={styles.sectionTitle}>Skin Type</Text>
+                <Text style={styles.assessmentText}>{results.skin_type}</Text>
+              </View>
+            )}
+
+            {/* Concerns Detected */}
+            {results.key_concerns && results.key_concerns.length > 0 && (
+              <View style={[styles.sectionCard, { marginHorizontal: 0 }]}>
+                <Text style={styles.sectionTitle}>Concerns Detected</Text>
+                {results.key_concerns.map((concern: any, index: number) => (
+                  <View key={index} style={styles.concernCard}>
+                    <View style={styles.concernHeader}>
+                      <Text style={styles.concernName}>{concern.name}</Text>
+                      <View style={[styles.severityBadge, { backgroundColor: getSeverityColor(concern.severity) }]}>
+                        <Text style={[styles.severityText, { color: getSeverityTextColor(concern.severity) }]}>{concern.severity}</Text>
+                      </View>
+                    </View>
+                    <Text style={styles.concernLocation}>Location: {concern.location}</Text>
+                    <Text style={styles.concernDescription}>{concern.short_description}</Text>
+                  </View>
+                ))}
+              </View>
+            )}
+          </View>
+        </View>
 
         {/* Ingredients to Avoid */}
         {results.ingredients_to_avoid && results.ingredients_to_avoid.length > 0 && (
@@ -652,6 +654,23 @@ const styles = StyleSheet.create({
     fontSize: 12,
     lineHeight: 18,
     color: '#6B7280',
+  },
+  splitLayout: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 24,
+    paddingHorizontal: 20,
+    marginBottom: 24,
+    alignItems: 'flex-start',
+  },
+  leftColumn: {
+    flex: 1,
+    minWidth: 300,
+    width: '100%',
+  },
+  rightColumn: {
+    flex: 1,
+    minWidth: 300,
   },
   bottomActions: {
     position: 'absolute',
