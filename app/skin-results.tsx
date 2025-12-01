@@ -53,20 +53,49 @@ export default function SkinResults() {
           key_concerns: (data.key_concerns && data.key_concerns.length > 0)
             ? data.key_concerns
             : (data.skinAnalysis?.key_concerns || []),
-          // Check if arrays have items, not just if they exist
+          // Check if arrays have items, not just if they exist - add defaults for old data
           ingredients_to_avoid: (data.ingredients_to_avoid && data.ingredients_to_avoid.length > 0)
             ? data.ingredients_to_avoid
-            : (data.skinAnalysis?.ingredients_to_avoid || []),
+            : (data.skinAnalysis?.ingredients_to_avoid && data.skinAnalysis.ingredients_to_avoid.length > 0)
+              ? data.skinAnalysis.ingredients_to_avoid
+              : [
+                { name: "Harsh physical scrubs", reason: "May irritate inflamed areas and potentially spread bacteria, worsening breakouts." },
+                { name: "Comedogenic ingredients (e.g., some heavy oils, waxes)", reason: "Can clog pores and contribute to the formation of new breakouts." },
+                { name: "High concentrations of alcohol (denatured)", reason: "Can be drying and irritating, potentially compromising the skin barrier and leading to more oil production." },
+                { name: "Synthetic fragrances and essential oils", reason: "May cause irritation or allergic reactions, especially on sensitive or compromised skin." }
+              ],
           ingredients_that_help: (data.ingredients_that_help && data.ingredients_that_help.length > 0)
             ? data.ingredients_that_help
-            : (data.skinAnalysis?.ingredients_that_help || []),
+            : (data.skinAnalysis?.ingredients_that_help && data.skinAnalysis.ingredients_that_help.length > 0)
+              ? data.skinAnalysis.ingredients_that_help
+              : [
+                { name: "Salicylic Acid 2%", use_for: "Helps to exfoliate inside the pores, addressing visible breakouts and improving pore appearance.", product_type: "Cleanser|Serum|Spot Treatment" },
+                { name: "Niacinamide 5-10%", use_for: "May help to reduce redness, calm inflammation, and improve overall skin tone and barrier function.", product_type: "Serum|Moisturiser" },
+                { name: "Benzoyl Peroxide 2.5-5%", use_for: "Can target the visible inflamed breakouts by reducing bacteria and clearing pores.", product_type: "Spot Treatment|Cleanser" },
+                { name: "Centella Asiatica (Cica)", use_for: "Known for its soothing properties, may help calm irritated skin and support healing.", product_type: "Serum|Moisturiser" }
+              ],
           dermatology_advice: data.dermatology_advice || data.skinAnalysis?.dermatology_advice,
           action_plan_steps: (data.action_plan_steps && data.action_plan_steps.length > 0)
             ? data.action_plan_steps
-            : (data.actionPlan?.action_plan_steps || data.skinAnalysis?.action_plan_steps || []),
+            : (data.actionPlan?.action_plan_steps && data.actionPlan.action_plan_steps.length > 0)
+              ? data.actionPlan.action_plan_steps
+              : (data.skinAnalysis?.action_plan_steps && data.skinAnalysis.action_plan_steps.length > 0)
+                ? data.skinAnalysis.action_plan_steps
+                : [
+                  { title: "Gentle Skincare Routine", priority: "High", description: "Use gentle, fragrance-free products suitable for your skin type. Cleanse twice daily and moisturize regularly." },
+                  { title: "Sun Protection", priority: "High", description: "Apply broad-spectrum SPF 30+ daily, even on cloudy days. Reapply every 2 hours when outdoors." }
+                ],
           quick_tips: (data.quick_tips && data.quick_tips.length > 0)
             ? data.quick_tips
-            : (data.actionPlan?.quick_tips || data.skinAnalysis?.quick_tips || []),
+            : (data.actionPlan?.quick_tips && data.actionPlan.quick_tips.length > 0)
+              ? data.actionPlan.quick_tips
+              : (data.skinAnalysis?.quick_tips && data.skinAnalysis.quick_tips.length > 0)
+                ? data.skinAnalysis.quick_tips
+                : [
+                  "Stay hydrated by drinking plenty of water throughout the day.",
+                  "Get adequate sleep (7-9 hours) to support skin repair.",
+                  "Avoid touching your face with unwashed hands."
+                ],
           healthScore: data.healthScore || data.skinAnalysis?.healthScore || 70,
         };
 
