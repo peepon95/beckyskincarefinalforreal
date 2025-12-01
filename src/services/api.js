@@ -494,6 +494,14 @@ CRITICAL RULES:
     const scoreDeduction = (severityCounts.Severe * 20) + (severityCounts.Moderate * 10) + (severityCounts.Mild * 5);
     data.healthScore = Math.max(50, Math.min(100, baseScore - scoreDeduction));
 
+    // Log final data before returning
+    console.log('✅ Final API response data:');
+    console.log('  - overall_assessment:', data.overall_assessment ? 'Present' : 'Missing');
+    console.log('  - action_plan_steps:', data.action_plan_steps?.length || 0);
+    console.log('  - quick_tips:', data.quick_tips?.length || 0);
+    console.log('  - ingredients_to_avoid:', data.ingredients_to_avoid?.length || 0);
+    console.log('  - ingredients_that_help:', data.ingredients_that_help?.length || 0);
+
     return data;
 
   } catch (error) {
