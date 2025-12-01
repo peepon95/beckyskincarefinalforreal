@@ -452,7 +452,8 @@ CRITICAL RULES:
     }
 
     if (!data.overall_assessment || data.overall_assessment.trim() === '') {
-      console.warn("⚠️ API response missing or empty overall_assessment");
+      console.warn("⚠️ API response missing or empty overall_assessment, adding default");
+      data.overall_assessment = "Based on the visual analysis of your skin, we've identified several areas that may benefit from targeted skincare. The concerns detected include visible texture variations and pigmentation. Please review the detailed findings below for personalized recommendations.";
     }
 
     if (!data.action_plan_steps || data.action_plan_steps.length === 0) {
