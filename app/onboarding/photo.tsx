@@ -153,6 +153,10 @@ export default function PhotoScreen() {
       }
 
       // Include photoUri in saved results
+      console.log('📸 Current photoUri value:', photoUri);
+      console.log('📸 PhotoUri length:', photoUri?.length || 0);
+      console.log('📸 PhotoUri starts with:', photoUri?.substring(0, 50) || 'EMPTY');
+
       const dataToSave = {
         ...results,
         photoUri,
@@ -161,6 +165,7 @@ export default function PhotoScreen() {
       console.log('💾 Saving analysis results...');
       console.log('📋 Data includes:', {
         hasPhoto: !!dataToSave.photoUri,
+        photoUriLength: dataToSave.photoUri?.length || 0,
         hasAssessment: !!dataToSave.overall_assessment,
         hasSkinType: !!dataToSave.skin_type,
         actionSteps: dataToSave.action_plan_steps?.length || 0,
