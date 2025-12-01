@@ -456,7 +456,8 @@ CRITICAL RULES:
       data.overall_assessment = "Based on the visual analysis of your skin, we've identified several areas that may benefit from targeted skincare. The concerns detected include visible texture variations and pigmentation. Please review the detailed findings below for personalized recommendations.";
     }
 
-    if (!data.ingredients_to_avoid || data.ingredients_to_avoid.length === 0) {
+    // More defensive checks - handle null, undefined, and empty arrays
+    if (!data.ingredients_to_avoid || !Array.isArray(data.ingredients_to_avoid) || data.ingredients_to_avoid.length === 0) {
       console.warn('⚠️ No ingredients to avoid received, adding defaults');
       data.ingredients_to_avoid = [
         {
@@ -478,7 +479,7 @@ CRITICAL RULES:
       ];
     }
 
-    if (!data.ingredients_that_help || data.ingredients_that_help.length === 0) {
+    if (!data.ingredients_that_help || !Array.isArray(data.ingredients_that_help) || data.ingredients_that_help.length === 0) {
       console.warn('⚠️ No helpful ingredients received, adding defaults');
       data.ingredients_that_help = [
         {
@@ -504,7 +505,7 @@ CRITICAL RULES:
       ];
     }
 
-    if (!data.action_plan_steps || data.action_plan_steps.length === 0) {
+    if (!data.action_plan_steps || !Array.isArray(data.action_plan_steps) || data.action_plan_steps.length === 0) {
       console.warn('⚠️ No action plan steps received, adding default steps');
       data.action_plan_steps = [
         {
@@ -520,7 +521,7 @@ CRITICAL RULES:
       ];
     }
 
-    if (!data.quick_tips || data.quick_tips.length === 0) {
+    if (!data.quick_tips || !Array.isArray(data.quick_tips) || data.quick_tips.length === 0) {
       console.warn('⚠️ No quick tips received, adding default tips');
       data.quick_tips = [
         "Stay hydrated by drinking plenty of water throughout the day.",
