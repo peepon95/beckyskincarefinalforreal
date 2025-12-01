@@ -135,18 +135,19 @@ export default function PhotoScreen() {
 
       console.log('🔄 Calling AI analysis API...');
       const results = await analyzeSkin(photoBase64);
-      console.log('✅ Analysis complete!', results);
+      console.log('✅ Analysis complete!');
+      console.log('📊 Full results object:', JSON.stringify(results, null, 2));
 
-      // Validate that we have all required data
-      if (!results.overall_assessment || !results.skin_type) {
-        console.error('❌ Incomplete analysis results:', results);
-        throw new Error('Incomplete analysis received. Please try again.');
+      // Log warnings but don't block - let's see what we actually got
+      if (!results.overall_assessment) {
+        console.warn('⚠️ Missing overall_assessment in results');
       }
-
+      if (!results.skin_type) {
+        console.warn('⚠️ Missing skin_type in results');
+      }
       if (!results.action_plan_steps || results.action_plan_steps.length === 0) {
         console.warn('⚠️ No action plan steps in results');
       }
-
       if (!results.quick_tips || results.quick_tips.length === 0) {
         console.warn('⚠️ No quick tips in results');
       }

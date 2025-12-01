@@ -443,13 +443,16 @@ CRITICAL RULES:
     const cleanedText = stripMarkdown(responseText);
     const data = JSON.parse(cleanedText);
 
+    // Log what we got - don't throw errors yet
+    console.log('📊 Parsed API response keys:', Object.keys(data));
+
     // Validate required fields to ensure complete response
     if (!data.skin_type) {
-      throw new Error("Invalid response format: missing skin_type");
+      console.warn("⚠️ API response missing skin_type");
     }
 
     if (!data.overall_assessment || data.overall_assessment.trim() === '') {
-      throw new Error("Incomplete response: missing overall assessment");
+      console.warn("⚠️ API response missing or empty overall_assessment");
     }
 
     if (!data.action_plan_steps || data.action_plan_steps.length === 0) {
