@@ -10,6 +10,7 @@ import { analyzeSkin } from '@/src/services/api';
 import storage from '@/src/utils/storage';
 import SkinAnalysisLoader from '@/components/SkinAnalysisLoader';
 import { useAuth } from '@/contexts/AuthContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function PhotoScreen() {
   const router = useRouter();
@@ -157,43 +158,57 @@ export default function PhotoScreen() {
       console.log('📸 PhotoUri length:', photoUri?.length || 0);
       console.log('📸 PhotoUri starts with:', photoUri?.substring(0, 50) || 'EMPTY');
 
-      const dataToSave = {
+      // Separate data for storage (without large photoUri) and for display
+      const dataForStorage = {
         ...results,
-        photoUri,
+        photoUri: null, // Don't save large base64 to AsyncStorage
+      };
+
+      const dataWithPhoto = {
+        ...results,
+        photoUri, // Keep photo for passing to results page
       };
 
       console.log('💾 Saving analysis results...');
       console.log('📋 Data includes:', {
-        hasPhoto: !!dataToSave.photoUri,
-        photoUriLength: dataToSave.photoUri?.length || 0,
-        hasAssessment: !!dataToSave.overall_assessment,
-        hasSkinType: !!dataToSave.skin_type,
-        actionSteps: dataToSave.action_plan_steps?.length || 0,
-        quickTips: dataToSave.quick_tips?.length || 0
+        hasPhoto: !!photoUri,
+        photoUriLength: photoUri?.length || 0,
+        hasAssessment: !!results.overall_assessment,
+        hasSkinType: !!results.skin_type,
+        actionSteps: results.action_plan_steps?.length || 0,
+        quickTips: results.quick_tips?.length || 0
       });
 
-      await storage.saveSkinAnalysis(dataToSave);
-      console.log('✅ Skin analysis saved successfully');
+      // Save metadata only (no photo) with timeout protection
+      try {
+        await Promise.race([
+          storage.saveSkinAnalysis(dataForStorage),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('Storage timeout')), 3000))
+        ]);
+        console.log('✅ Skin analysis saved successfully');
+      } catch (saveError) {
+        console.warn('⚠️ Storage save failed or timed out, continuing anyway:', saveError);
+      }
 
-      // Mark onboarding as complete for logged-in users
-      console.log('✅ Marking onboarding as complete...');
-      await completeOnboarding();
+      // Mark onboarding as complete (non-blocking)
+      completeOnboarding().catch(e => console.warn('Onboarding completion warning:', e));
 
-      // Save to scan history
+      // Save to scan history (non-blocking, without photo)
       const scanToSave = {
-        ...dataToSave,
+        ...dataForStorage,
         unique_id: Date.now().toString(),
         display_title: 'Skin Analysis',
         created_at: new Date().toISOString(),
       };
-      await storage.saveScan(scanToSave);
-      console.log('💾 Scan added to history');
+      storage.saveScan(scanToSave).catch(e => console.warn('History save warning:', e));
 
-      // Wait a bit for the loader animation
-      setTimeout(() => {
-        setIsAnalyzing(false);
-        router.push('/skin-results');
-      }, 1000);
+      // Navigate immediately with full data including photo
+      setIsAnalyzing(false);
+
+      // Store data temporarily for results page to pick up
+      await AsyncStorage.setItem('@temp_analysis_result', JSON.stringify(dataWithPhoto));
+
+      router.push('/skin-results');
 
     } catch (error: any) {
       console.error('❌ Analysis error:', error);

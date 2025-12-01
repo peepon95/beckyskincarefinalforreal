@@ -4,6 +4,7 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { ArrowLeft, AlertCircle, AlertTriangle, CheckCircle } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import storage from '../src/utils/storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function SkinResults() {
   const router = useRouter();
@@ -20,7 +21,14 @@ export default function SkinResults() {
       console.log('📊 Loading skin analysis results...');
       let data;
 
-      if (params.scanId) {
+      // First check if there's fresh data from analysis (includes photo)
+      const tempData = await AsyncStorage.getItem('@temp_analysis_result');
+      if (tempData) {
+        console.log('📂 Loading from temp storage (fresh analysis with photo)');
+        data = JSON.parse(tempData);
+        // Clear temp storage after reading
+        await AsyncStorage.removeItem('@temp_analysis_result');
+      } else if (params.scanId) {
         const scans = await storage.getSavedScans();
         data = scans.find((s: any) => s.unique_id === params.scanId);
         console.log('📂 Loading from saved scan:', params.scanId);
