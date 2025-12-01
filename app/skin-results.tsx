@@ -82,8 +82,11 @@ export default function SkinResults() {
               : (data.skinAnalysis?.action_plan_steps && data.skinAnalysis.action_plan_steps.length > 0)
                 ? data.skinAnalysis.action_plan_steps
                 : [
-                  { title: "Gentle Skincare Routine", priority: "High", description: "Use gentle, fragrance-free products suitable for your skin type. Cleanse twice daily and moisturize regularly." },
-                  { title: "Sun Protection", priority: "High", description: "Apply broad-spectrum SPF 30+ daily, even on cloudy days. Reapply every 2 hours when outdoors." }
+                  { title: "Consult a Dermatologist", priority: "High", description: "Schedule an appointment with a dermatologist for an accurate diagnosis and a personalized treatment plan, especially for the inflamed lesion and scarring." },
+                  { title: "Gentle Cleansing & Hydration", priority: "Medium", description: "Use a mild, pH-balanced cleanser twice daily. Follow with a lightweight, non-comedogenic moisturizer to support skin barrier function without clogging pores." },
+                  { title: "Incorporate Targeted Treatment", priority: "High", description: "After dermatologist consultation, consider incorporating prescribed topical treatments or over-the-counter options with beneficial ingredients like salicylic acid or benzoyl peroxide to manage active breakouts." },
+                  { title: "Daily Sun Protection", priority: "High", description: "Apply a broad-spectrum sunscreen with at least SPF 30 every morning, even on cloudy days, to protect inflamed areas and prevent dark spots from forming or worsening." },
+                  { title: "Hands-Off Policy", priority: "High", description: "Resist the urge to pick, pop, or squeeze any blemishes to prevent further inflammation, infection, and potential permanent scarring." }
                 ],
           quick_tips: (data.quick_tips && data.quick_tips.length > 0)
             ? data.quick_tips
@@ -344,21 +347,11 @@ export default function SkinResults() {
               action_plan_steps: results.action_plan_steps && results.action_plan_steps.length > 0
                 ? results.action_plan_steps
                 : [
-                  {
-                    title: "Gentle Skincare Routine",
-                    priority: "High",
-                    description: "Establish a consistent routine using mild, non-comedogenic cleansers and moisturisers to support skin health without causing further irritation."
-                  },
-                  {
-                    title: "Targeted Treatment for Breakouts",
-                    priority: "Medium",
-                    description: "Incorporate a spot treatment containing ingredients like salicylic acid or benzoyl peroxide on the visible raised lesions as needed to help calm inflammation."
-                  },
-                  {
-                    title: "Sun Protection",
-                    priority: "Medium",
-                    description: "Apply a broad-spectrum SPF 30+ sunscreen daily to protect the skin and prevent post-inflammatory hyperpigmentation from the visible lesions."
-                  }
+                  { title: "Consult a Dermatologist", priority: "High", description: "Schedule an appointment with a dermatologist for an accurate diagnosis and a personalized treatment plan, especially for the inflamed lesion and scarring." },
+                  { title: "Gentle Cleansing & Hydration", priority: "Medium", description: "Use a mild, pH-balanced cleanser twice daily. Follow with a lightweight, non-comedogenic moisturizer to support skin barrier function without clogging pores." },
+                  { title: "Incorporate Targeted Treatment", priority: "High", description: "After dermatologist consultation, consider incorporating prescribed topical treatments or over-the-counter options with beneficial ingredients like salicylic acid or benzoyl peroxide to manage active breakouts." },
+                  { title: "Daily Sun Protection", priority: "High", description: "Apply a broad-spectrum sunscreen with at least SPF 30 every morning, even on cloudy days, to protect inflamed areas and prevent dark spots from forming or worsening." },
+                  { title: "Hands-Off Policy", priority: "High", description: "Resist the urge to pick, pop, or squeeze any blemishes to prevent further inflammation, infection, and potential permanent scarring." }
                 ],
               quick_tips: results.quick_tips && results.quick_tips.length > 0
                 ? results.quick_tips

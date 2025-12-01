@@ -509,14 +509,29 @@ CRITICAL RULES:
       console.warn('⚠️ No action plan steps received, adding default steps');
       data.action_plan_steps = [
         {
-          title: "Gentle Skincare Routine",
+          title: "Consult a Dermatologist",
           priority: "High",
-          description: "Use gentle, fragrance-free products suitable for your skin type. Cleanse twice daily and moisturize regularly."
+          description: "Schedule an appointment with a dermatologist for an accurate diagnosis and a personalized treatment plan, especially for the inflamed lesion and scarring."
         },
         {
-          title: "Sun Protection",
+          title: "Gentle Cleansing & Hydration",
+          priority: "Medium",
+          description: "Use a mild, pH-balanced cleanser twice daily. Follow with a lightweight, non-comedogenic moisturizer to support skin barrier function without clogging pores."
+        },
+        {
+          title: "Incorporate Targeted Treatment",
           priority: "High",
-          description: "Apply broad-spectrum SPF 30+ daily, even on cloudy days. Reapply every 2 hours when outdoors."
+          description: "After dermatologist consultation, consider incorporating prescribed topical treatments or over-the-counter options with beneficial ingredients like salicylic acid or benzoyl peroxide to manage active breakouts."
+        },
+        {
+          title: "Daily Sun Protection",
+          priority: "High",
+          description: "Apply a broad-spectrum sunscreen with at least SPF 30 every morning, even on cloudy days, to protect inflamed areas and prevent dark spots from forming or worsening."
+        },
+        {
+          title: "Hands-Off Policy",
+          priority: "High",
+          description: "Resist the urge to pick, pop, or squeeze any blemishes to prevent further inflammation, infection, and potential permanent scarring."
         }
       ];
     }

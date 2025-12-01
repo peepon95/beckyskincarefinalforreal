@@ -88,19 +88,111 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const signInWithEmail = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    return { error };
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        console.error('❌ Sign in error:', error.message);
+
+        // Provide more specific error messages
+        if (error.message.includes('Invalid login credentials')) {
+          return {
+            error: {
+              message: 'Invalid email or password. Please check your credentials and try again.'
+            }
+          };
+        }
+
+        if (error.message.includes('Email not confirmed')) {
+          return {
+            error: {
+              message: 'Please verify your email address before signing in. Check your inbox for the verification link.'
+            }
+          };
+        }
+
+        if (error.message.includes('User not found')) {
+          return {
+            error: {
+              message: 'No account found with this email. Please sign up first.'
+            }
+          };
+        }
+
+        // Return the original error for other cases
+        return { error };
+      }
+
+      console.log('✅ Sign in successful');
+      return { error: null };
+    } catch (err: any) {
+      console.error('❌ Unexpected sign in error:', err);
+      return {
+        error: {
+          message: 'An unexpected error occurred. Please try again.'
+        }
+      };
+    }
   };
 
   const signUpWithEmail = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-    });
-    return { error };
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+
+      if (error) {
+        console.error('❌ Sign up error:', error.message);
+
+        // Provide more specific error messages
+        if (error.message.includes('User already registered')) {
+          return {
+            error: {
+              message: 'An account with this email already exists. Please sign in instead.'
+            }
+          };
+        }
+
+        if (error.message.includes('Password should be at least')) {
+          return {
+            error: {
+              message: 'Password is too weak. Please use at least 6 characters.'
+            }
+          };
+        }
+
+        if (error.message.includes('Invalid email')) {
+          return {
+            error: {
+              message: 'Please enter a valid email address.'
+            }
+          };
+        }
+
+        // Return the original error for other cases
+        return { error };
+      }
+
+      console.log('✅ Sign up successful');
+
+      // Check if email confirmation is required
+      if (data?.user && !data.user.confirmed_at) {
+        console.log('📧 Email confirmation required');
+      }
+
+      return { error: null };
+    } catch (err: any) {
+      console.error('❌ Unexpected sign up error:', err);
+      return {
+        error: {
+          message: 'An unexpected error occurred. Please try again.'
+        }
+      };
+    }
   };
 
   const signInWithGoogle = async () => {

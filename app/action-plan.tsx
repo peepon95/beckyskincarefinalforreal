@@ -21,8 +21,25 @@ export default function ActionPlan() {
         ? JSON.parse(params.analysisData as string)
         : null;
 
+      console.log('📋 Action Plan - Raw data:', data ? 'Found' : 'Not found');
+      console.log('📋 Action plan steps:', data?.action_plan_steps?.length || 0);
+      console.log('💡 Quick tips:', data?.quick_tips?.length || 0);
+
       if (data) {
-        setPlanData(data);
+        // Normalize data structure - handle both flat and nested formats
+        const normalizedData = {
+          ...data,
+          // Ensure action plan fields are at top level
+          action_plan_steps: data.action_plan_steps || data.actionPlan?.action_plan_steps || [],
+          quick_tips: data.quick_tips || data.actionPlan?.quick_tips || [],
+          // Ensure photoUri is accessible
+          photoUri: data.photoUri || data.skinAnalysis?.photoUri,
+        };
+
+        console.log('✅ Normalized - Action steps:', normalizedData.action_plan_steps.length);
+        console.log('✅ Normalized - Quick tips:', normalizedData.quick_tips.length);
+
+        setPlanData(normalizedData);
       }
     } catch (error) {
       console.error('Error loading plan data:', error);
