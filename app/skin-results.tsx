@@ -50,12 +50,23 @@ export default function SkinResults() {
           overall_assessment: data.overall_assessment || data.skinAnalysis?.overall_assessment ||
             "Based on the analysis of your skin, we've identified several areas that may benefit from targeted care. Please review the concerns and recommendations below.",
           skin_type: data.skin_type || data.skinAnalysis?.skin_type || 'Unknown',
-          key_concerns: data.key_concerns || data.skinAnalysis?.key_concerns || [],
-          ingredients_to_avoid: data.ingredients_to_avoid || data.skinAnalysis?.ingredients_to_avoid || [],
-          ingredients_that_help: data.ingredients_that_help || data.skinAnalysis?.ingredients_that_help || [],
+          key_concerns: (data.key_concerns && data.key_concerns.length > 0)
+            ? data.key_concerns
+            : (data.skinAnalysis?.key_concerns || []),
+          // Check if arrays have items, not just if they exist
+          ingredients_to_avoid: (data.ingredients_to_avoid && data.ingredients_to_avoid.length > 0)
+            ? data.ingredients_to_avoid
+            : (data.skinAnalysis?.ingredients_to_avoid || []),
+          ingredients_that_help: (data.ingredients_that_help && data.ingredients_that_help.length > 0)
+            ? data.ingredients_that_help
+            : (data.skinAnalysis?.ingredients_that_help || []),
           dermatology_advice: data.dermatology_advice || data.skinAnalysis?.dermatology_advice,
-          action_plan_steps: data.action_plan_steps || data.actionPlan?.action_plan_steps || data.skinAnalysis?.action_plan_steps || [],
-          quick_tips: data.quick_tips || data.actionPlan?.quick_tips || data.skinAnalysis?.quick_tips || [],
+          action_plan_steps: (data.action_plan_steps && data.action_plan_steps.length > 0)
+            ? data.action_plan_steps
+            : (data.actionPlan?.action_plan_steps || data.skinAnalysis?.action_plan_steps || []),
+          quick_tips: (data.quick_tips && data.quick_tips.length > 0)
+            ? data.quick_tips
+            : (data.actionPlan?.quick_tips || data.skinAnalysis?.quick_tips || []),
           healthScore: data.healthScore || data.skinAnalysis?.healthScore || 70,
         };
 
