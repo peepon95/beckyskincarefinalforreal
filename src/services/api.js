@@ -107,33 +107,50 @@ async function callGoogleAI(prompt, imageBase64, model) {
   let response;
   try {
     const controller = new AbortController();
-const timeoutId = setTimeout(() => controller.abort(), 30000);
+    // 45 second timeout - balanced for mobile and web reliability
+    const timeoutId = setTimeout(() => controller.abort(), 45000);
 
-response = await fetch(
-  `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
-  {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-goog-api-key': trimmedKey,
-    },
-    body: JSON.stringify(requestBody),
-    signal: controller.signal,
-  }
-);
-if (!response.ok) {
-  const errorText = await response.text().catch(() => '');
-  console.error('❌ Gemini API error:', response.status, errorText);
-  throw new Error("Becky couldn't analyse your skin right now. Please contact support.");
-}
+    console.log('🚀 Sending request to Gemini API...');
+    const startTime = Date.now();
+
+    response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-goog-api-key': trimmedKey,
+        },
+        body: JSON.stringify(requestBody),
+        signal: controller.signal,
+      }
+    );
+
+    const endTime = Date.now();
+    console.log(`⏱️ API request took ${(endTime - startTime) / 1000}s`);
 
     clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      const errorText = await response.text().catch(() => '');
+      console.error('❌ Gemini API error:', response.status, errorText);
+
+      if (response.status === 503) {
+        throw new Error("The AI service is temporarily unavailable. Please try again in a moment.");
+      }
+
+      throw new Error("Becky couldn't analyse your skin right now. Please try again.");
+    }
+
   } catch (networkError) {
     console.error('❌ Network error:', networkError);
     if (networkError.name === 'AbortError') {
-      throw new Error('Request timed out. Please check your connection and try again.');
+      throw new Error('Request timed out after 45 seconds. Please check your connection and try again.');
     }
-    throw new Error('Network connection failed. Please check your internet connection and try again.');
+    if (networkError.message.includes('fetch')) {
+      throw new Error('Network connection failed. Please check your internet connection and try again.');
+    }
+    throw networkError;
   }
 
   if (!response.ok) {
@@ -426,8 +443,38 @@ CRITICAL RULES:
     const cleanedText = stripMarkdown(responseText);
     const data = JSON.parse(cleanedText);
 
+    // Validate required fields to ensure complete response
     if (!data.skin_type) {
       throw new Error("Invalid response format: missing skin_type");
+    }
+
+    if (!data.overall_assessment || data.overall_assessment.trim() === '') {
+      throw new Error("Incomplete response: missing overall assessment");
+    }
+
+    if (!data.action_plan_steps || data.action_plan_steps.length === 0) {
+      console.warn('⚠️ No action plan steps received, adding default steps');
+      data.action_plan_steps = [
+        {
+          title: "Gentle Skincare Routine",
+          priority: "High",
+          description: "Use gentle, fragrance-free products suitable for your skin type. Cleanse twice daily and moisturize regularly."
+        },
+        {
+          title: "Sun Protection",
+          priority: "High",
+          description: "Apply broad-spectrum SPF 30+ daily, even on cloudy days. Reapply every 2 hours when outdoors."
+        }
+      ];
+    }
+
+    if (!data.quick_tips || data.quick_tips.length === 0) {
+      console.warn('⚠️ No quick tips received, adding default tips');
+      data.quick_tips = [
+        "Stay hydrated by drinking plenty of water throughout the day.",
+        "Get adequate sleep (7-9 hours) to support skin repair.",
+        "Avoid touching your face with unwashed hands."
+      ];
     }
 
     // Calculate health score based on concerns

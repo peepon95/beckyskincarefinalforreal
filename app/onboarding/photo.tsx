@@ -125,6 +125,7 @@ export default function PhotoScreen() {
     try {
       setIsAnalyzing(true);
       console.log('🚀 Starting skin analysis...');
+      console.log('📸 Image size:', Math.round(photoBase64.length / 1024), 'KB');
 
       // Save photo data to context
       updateData({
@@ -132,8 +133,23 @@ export default function PhotoScreen() {
         photoBase64
       });
 
+      console.log('🔄 Calling AI analysis API...');
       const results = await analyzeSkin(photoBase64);
       console.log('✅ Analysis complete!', results);
+
+      // Validate that we have all required data
+      if (!results.overall_assessment || !results.skin_type) {
+        console.error('❌ Incomplete analysis results:', results);
+        throw new Error('Incomplete analysis received. Please try again.');
+      }
+
+      if (!results.action_plan_steps || results.action_plan_steps.length === 0) {
+        console.warn('⚠️ No action plan steps in results');
+      }
+
+      if (!results.quick_tips || results.quick_tips.length === 0) {
+        console.warn('⚠️ No quick tips in results');
+      }
 
       // Include photoUri in saved results
       const dataToSave = {
@@ -141,10 +157,20 @@ export default function PhotoScreen() {
         photoUri,
       };
 
+      console.log('💾 Saving analysis results...');
+      console.log('📋 Data includes:', {
+        hasPhoto: !!dataToSave.photoUri,
+        hasAssessment: !!dataToSave.overall_assessment,
+        hasSkinType: !!dataToSave.skin_type,
+        actionSteps: dataToSave.action_plan_steps?.length || 0,
+        quickTips: dataToSave.quick_tips?.length || 0
+      });
+
       await storage.saveSkinAnalysis(dataToSave);
       console.log('✅ Skin analysis saved successfully');
 
       // Mark onboarding as complete for logged-in users
+      console.log('✅ Marking onboarding as complete...');
       await completeOnboarding();
 
       // Save to scan history
@@ -169,9 +195,12 @@ export default function PhotoScreen() {
 
       // Determine user-friendly error message
       let errorMessage = "Becky couldn't analyse your skin right now. Please check your connection and try again.";
+      let showRetry = true;
 
       if (error?.message) {
-        if (error.message.includes("Becky couldn't") ||
+        if (error.message.includes('Incomplete')) {
+          errorMessage = 'The analysis was incomplete. This may be due to a slow connection. Please try again.';
+        } else if (error.message.includes("Becky couldn't") ||
           error.message.includes('Please') ||
           error.message.includes('try again')) {
           errorMessage = error.message;
@@ -181,25 +210,33 @@ export default function PhotoScreen() {
           errorMessage = 'Network error. Please check your internet connection and try again.';
         } else if (error.message.includes('API key') || error.message.includes('authentication')) {
           errorMessage = 'Service configuration error. Please contact support.';
+          showRetry = false;
+        } else if (error.message.includes('timeout') || error.message.includes('taking longer') || error.message.includes('timed out')) {
+          errorMessage = 'Analysis is taking too long. This may be due to a slow connection. Please try again.';
         }
       }
 
       // Show error alert
+      const buttons: any[] = [];
+
+      if (showRetry) {
+        buttons.push({
+          text: 'Try Again',
+          onPress: () => handleStartAnalysis(),
+          style: 'default'
+        });
+      }
+
+      buttons.push({
+        text: 'Go Back',
+        onPress: () => handleRetake(),
+        style: 'cancel'
+      });
+
       Alert.alert(
         'Analysis Failed',
         errorMessage,
-        [
-          {
-            text: 'Try Again',
-            onPress: () => handleStartAnalysis(),
-            style: 'default'
-          },
-          {
-            text: 'Go Back',
-            onPress: () => handleRetake(),
-            style: 'cancel'
-          }
-        ]
+        buttons
       );
     }
   };

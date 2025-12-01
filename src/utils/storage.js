@@ -22,9 +22,32 @@ const getCurrentUser = async () => {
 const storage = {
   async saveSkinAnalysis(data) {
     try {
+      // Validate critical fields before saving
+      if (!data.skin_type) {
+        console.warn('⚠️ Saving skin analysis without skin_type');
+      }
+      if (!data.overall_assessment) {
+        console.warn('⚠️ Saving skin analysis without overall_assessment');
+      }
+      if (!data.photoUri) {
+        console.warn('⚠️ Saving skin analysis without photoUri');
+      }
+      if (!data.action_plan_steps || data.action_plan_steps.length === 0) {
+        console.warn('⚠️ Saving skin analysis without action_plan_steps');
+      }
+
+      console.log('💾 Saving skin analysis with:', {
+        hasSkinType: !!data.skin_type,
+        hasAssessment: !!data.overall_assessment,
+        hasPhoto: !!data.photoUri,
+        actionSteps: data.action_plan_steps?.length || 0,
+        quickTips: data.quick_tips?.length || 0,
+        healthScore: data.healthScore
+      });
+
       // Always save to localStorage first (backup)
       await AsyncStorage.setItem(KEYS.SKIN_ANALYSIS, JSON.stringify(data));
-      console.log('💾 Skin analysis saved to localStorage');
+      console.log('✅ Skin analysis saved to localStorage');
 
       // If user is logged in, also save to Supabase
       const user = await getCurrentUser();
