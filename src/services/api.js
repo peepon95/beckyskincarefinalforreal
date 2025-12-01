@@ -437,7 +437,7 @@ Return ONLY valid JSON in the following structure (no markdown, no code blocks, 
 }
 
 CRITICAL RULES:
-- If skin type cannot be clearly inferred from the image, return "Unknown"
+- Infer skin type based on visible characteristics (pore size, oil/shine, texture, dryness). Common types: Oily, Dry, Combination, Normal, Sensitive. Only return "Unknown" if image quality is too poor to assess
 - Be visually descriptive but not alarming
 - Keep all text concise and factual
 - Focus on appearance, not medical diagnosis
