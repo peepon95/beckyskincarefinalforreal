@@ -301,7 +301,7 @@ export default function SkinResults() {
         {/* Ingredients That Can Help */}
         {results.ingredients_that_help && results.ingredients_that_help.length > 0 && (
           <View style={styles.sectionCard}>
-            <Text style={styles.sectionTitle}>Ingredients That Can Help</Text>
+            <Text style={styles.sectionTitle}>Ingredients to Look For</Text>
             <View style={styles.ingredientsGrid}>
               {results.ingredients_that_help.map((ingredient: any, index: number) => (
                 <View key={index} style={styles.ingredientCard}>
