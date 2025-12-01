@@ -23,14 +23,42 @@ export default function SkinResults() {
       if (params.scanId) {
         const scans = await storage.getSavedScans();
         data = scans.find((s: any) => s.unique_id === params.scanId);
+        console.log('📂 Loading from saved scan:', params.scanId);
       } else {
         data = await storage.getSkinAnalysis();
+        console.log('📂 Loading from current analysis');
       }
 
       console.log('✅ Loaded data:', data ? 'Found' : 'Not found');
 
       if (data) {
-        setResults(data);
+        console.log('🔍 Data structure:', JSON.stringify(data, null, 2));
+        console.log('📸 Photo URI:', data?.photoUri ? 'Present' : 'Missing');
+        console.log('📋 Overall assessment:', data?.overall_assessment ? 'Present' : 'Missing');
+        console.log('📋 Action plan steps:', data?.action_plan_steps?.length || 0);
+        console.log('💡 Quick tips:', data?.quick_tips?.length || 0);
+        console.log('🎯 Skin type:', data?.skin_type || 'Missing');
+      }
+
+      if (data) {
+        // Normalize data structure - handle both flat and nested formats
+        const normalizedData = {
+          ...data,
+          // Ensure photoUri is at top level
+          photoUri: data.photoUri || data.skinAnalysis?.photoUri,
+          // Ensure action plan fields are at top level
+          action_plan_steps: data.action_plan_steps || data.actionPlan?.action_plan_steps || [],
+          quick_tips: data.quick_tips || data.actionPlan?.quick_tips || [],
+          // Add fallback for missing assessment
+          overall_assessment: data.overall_assessment ||
+            "Based on the analysis of your skin, we've identified several areas that may benefit from targeted care. Please review the concerns and recommendations below.",
+        };
+
+        console.log('✅ Normalized data - Photo:', normalizedData.photoUri ? 'Yes' : 'No');
+        console.log('✅ Normalized data - Assessment:', normalizedData.overall_assessment ? 'Yes' : 'No');
+        console.log('✅ Normalized data - Action steps:', normalizedData.action_plan_steps.length);
+
+        setResults(normalizedData);
       }
       setLoading(false);
     } catch (error) {
