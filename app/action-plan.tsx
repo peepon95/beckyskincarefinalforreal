@@ -56,7 +56,7 @@ export default function ActionPlan() {
         unique_id: Date.now().toString(),
         created_at: new Date().toISOString(),
         display_title: `Scan from ${new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}`,
-        photoUri: planData.photoUri,
+        photoUri: null, // Don't save large base64 image
         skinAnalysis: {
           skin_type: planData.skin_type,
           key_concerns: planData.key_concerns || [],
@@ -72,7 +72,11 @@ export default function ActionPlan() {
         },
       };
 
-      await storage.saveScan(savedScan);
+      // Save with timeout protection
+      await Promise.race([
+        storage.saveScan(savedScan),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Save timeout')), 3000))
+      ]);
 
       Alert.alert('Success', 'Skin analysis & action plan saved to your home screen.', [
         { text: 'OK', onPress: () => router.push('/home') }
