@@ -64,7 +64,7 @@ export default function Welcome() {
             end={{ x: 1, y: 0 }}
             style={styles.buttonGradient}
           >
-            <Text style={styles.buttonText}>Start Your Skin Journey</Text>
+            <Text style={styles.buttonText}>Get Started</Text>
           </LinearGradient>
         </TouchableOpacity>
 
